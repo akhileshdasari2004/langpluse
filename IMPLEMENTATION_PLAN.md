@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Milestone 1 approved  
+Status: Active Development — Milestone 2 approved
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -281,6 +281,8 @@ The milestone is complete only when a seeded sales-email run opens through both
 the new run URL and the existing trace URL with equivalent raw telemetry.
 
 ## Milestone 2 — Dashboard
+
+**Status: IN PROGRESS**
 
 **PRD feature:** Dashboard.
 
