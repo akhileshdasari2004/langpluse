@@ -1,0 +1,44 @@
+import { describe, expect, it } from "vitest";
+import { ROUTES } from "./routes";
+
+const routeTitles = ROUTES.map((route) => route.title);
+const routePathnames = ROUTES.map((route) => route.pathname);
+
+describe("Mission Control navigation", () => {
+  it("exposes the agent execution surfaces", () => {
+    expect(routeTitles).toEqual(
+      expect.arrayContaining([
+        "Overview",
+        "Dashboards",
+        "Agent Runs",
+        "Run Sessions",
+        "Monitors",
+        "Automations",
+        "Settings",
+      ]),
+    );
+  });
+
+  it("does not expose removed Langfuse product surfaces", () => {
+    expect(routeTitles).not.toEqual(
+      expect.arrayContaining([
+        "Organizations",
+        "Prompts",
+        "Playground",
+        "Scores",
+        "Evaluators",
+        "Human Annotation",
+        "Datasets",
+        "Experiments",
+        "Upgrade",
+        "Support",
+      ]),
+    );
+    expect(routePathnames).not.toEqual(
+      expect.arrayContaining([
+        "/organization/[organizationId]",
+        "/project/[projectId]/settings/billing",
+      ]),
+    );
+  });
+});

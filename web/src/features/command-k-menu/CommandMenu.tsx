@@ -15,7 +15,6 @@ import { usePostHogClientCapture } from "@/src/features/posthog-analytics/usePos
 import { useDebounce } from "@/src/hooks/useDebounce";
 import { useCommandMenu } from "@/src/features/command-k-menu/CommandMenuProvider";
 import { useProjectSettingsPages } from "@/src/pages/project/[projectId]/settings";
-import { useOrganizationSettingsPages } from "@/src/pages/organization/[organizationId]/settings";
 import { useAccountSettingsPages } from "@/src/pages/account/settings";
 import { useQueryProjectOrOrganization } from "@/src/features/projects/hooks";
 import { api } from "@/src/utils/api";
@@ -191,49 +190,6 @@ function ProjectSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
-function OrganizationSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
-  const router = useRouter();
-  const capture = usePostHogClientCapture();
-  const orgSettingsPages = useOrganizationSettingsPages();
-  const { organization } = useQueryProjectOrOrganization();
-
-  const orgSettingsItems = orgSettingsPages
-    .filter((page) => page.show !== false && !("href" in page))
-    .map((page) => ({
-      title: `Organization Settings > ${page.title}`,
-      url: `/organization/${organization?.id}/settings${page.slug === "index" ? "" : `/${page.slug}`}`,
-      keywords: page.cmdKKeywords || [],
-    }));
-
-  if (orgSettingsItems.length === 0) return null;
-
-  return (
-    <>
-      <CommandSeparator />
-      <CommandGroup heading="Organization Settings">
-        {orgSettingsItems.map((item) => (
-          <CommandItem
-            key={item.url}
-            value={item.title}
-            keywords={item.keywords}
-            onSelect={() => {
-              router.push(item.url);
-              capture("cmd_k_menu:navigated", {
-                type: "organization_settings",
-                title: item.title,
-                url: item.url,
-              });
-              onNavigate();
-            }}
-          >
-            {item.title}
-          </CommandItem>
-        ))}
-      </CommandGroup>
-    </>
-  );
-}
-
 function AccountSettingsGroup({ onNavigate }: { onNavigate: () => void }) {
   const router = useRouter();
   const capture = usePostHogClientCapture();
@@ -356,7 +312,6 @@ function CommandMenuComponent({
         <ProjectsGroup onNavigate={handleNavigate} />
         <DashboardsGroup onNavigate={handleNavigate} />
         <ProjectSettingsGroup onNavigate={handleNavigate} />
-        <OrganizationSettingsGroup onNavigate={handleNavigate} />
         <AccountSettingsGroup onNavigate={handleNavigate} />
       </CommandList>
     </CommandDialog>

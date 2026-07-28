@@ -26,9 +26,7 @@ import { AuditLogsSettingsPage } from "@/src/ee/features/audit-log-viewer/AuditL
 import { ModelsSettings } from "@/src/features/models/components/ModelSettings";
 import ConfigureRetention from "@/src/features/projects/components/ConfigureRetention";
 import ContainerPage from "@/src/components/layouts/container-page";
-import ProtectedLabelsSettings from "@/src/features/prompts/components/ProtectedLabelsSettings";
 import { SiSlack } from "react-icons/si";
-import { ScoreConfigSettings } from "@/src/features/score-configs/components/ScoreConfigSettings";
 import { env } from "@/src/env.mjs";
 import { PersonalNotificationSettings } from "@/src/features/notifications/components/PersonalNotificationSettings";
 import { ProjectNotificationChannels } from "@/src/features/notifications/components/ProjectNotificationChannels";
@@ -45,11 +43,7 @@ type ProjectSettingsPage = {
 export function useProjectSettingsPages(): ProjectSettingsPage[] {
   const router = useRouter();
   const { project, organization } = useQueryProject();
-  const showBillingSettings = useHasEntitlement("cloud-billing");
   const showRetentionSettings = useHasEntitlement("data-retention");
-  const showProtectedLabelsSettings = useHasEntitlement(
-    "prompt-protected-labels",
-  );
   if (!project || !organization || !router.query.projectId) {
     return [];
   }
@@ -57,27 +51,21 @@ export function useProjectSettingsPages(): ProjectSettingsPage[] {
   return getProjectSettingsPages({
     project,
     organization,
-    showBillingSettings,
     showRetentionSettings,
     showLLMConnectionsSettings: true,
-    showProtectedLabelsSettings,
   });
 }
 
 export const getProjectSettingsPages = ({
   project,
   organization,
-  showBillingSettings,
   showRetentionSettings,
   showLLMConnectionsSettings,
-  showProtectedLabelsSettings,
 }: {
   project: { id: string; name: string; metadata: Record<string, unknown> };
   organization: { id: string; name: string; metadata: Record<string, unknown> };
-  showBillingSettings: boolean;
   showRetentionSettings: boolean;
   showLLMConnectionsSettings: boolean;
-  showProtectedLabelsSettings: boolean;
 }): ProjectSettingsPage[] => [
   {
     title: "General",
@@ -181,19 +169,6 @@ export const getProjectSettingsPages = ({
     content: <ModelsSettings projectId={project.id} />,
   },
   {
-    title: "Protected Prompt Labels",
-    slug: "protected-prompt-labels",
-    cmdKKeywords: ["prompt", "label", "protect", "lock"],
-    content: <ProtectedLabelsSettings projectId={project.id} />,
-    show: showProtectedLabelsSettings,
-  },
-  {
-    title: "Scores Configs",
-    slug: "scores",
-    cmdKKeywords: ["config"],
-    content: <ScoreConfigSettings projectId={project.id} />,
-  },
-  {
     title: "Members",
     slug: "members",
     cmdKKeywords: ["invite", "user"],
@@ -229,7 +204,7 @@ export const getProjectSettingsPages = ({
   {
     title: "Batch Actions",
     slug: "batch-actions",
-    cmdKKeywords: ["bulk", "batch", "action", "dataset", "delete"],
+    cmdKKeywords: ["bulk", "batch", "action", "delete"],
     content: <BatchActionsSettingsPage projectId={project.id} />,
   },
   {
@@ -248,17 +223,6 @@ export const getProjectSettingsPages = ({
         <ProjectNotificationChannels projectId={project.id} />
       </div>
     ),
-  },
-  {
-    title: "Billing",
-    slug: "billing",
-    href: `/organization/${organization.id}/settings/billing`,
-    show: showBillingSettings,
-  },
-  {
-    title: "Organization Settings",
-    slug: "organization",
-    href: `/organization/${organization.id}/settings`,
   },
 ];
 
