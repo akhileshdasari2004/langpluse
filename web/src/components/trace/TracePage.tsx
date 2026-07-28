@@ -17,13 +17,17 @@ import { Badge } from "@/src/components/ui/badge";
 import { showErrorToast } from "@/src/features/notifications/showErrorToast";
 import { useEffect } from "react";
 import { PRODUCT_NAME } from "@/src/constants";
+import { api } from "@/src/utils/api";
+import { RunWorkbench } from "@/src/features/agent-executions/components/RunWorkbench";
 
 export function TracePage({
   traceId,
   timestamp,
+  mode = "trace",
 }: {
   traceId: string;
   timestamp?: Date;
+  mode?: "trace" | "run";
 }) {
   const router = useRouter();
   const session = useSession();
@@ -35,6 +39,18 @@ export function TracePage({
     traceId,
     timestamp,
   });
+  const runProjection = api.agentExecutions.getRun.useQuery(
+    {
+      projectId: routeProjectId,
+      traceId,
+      timestamp,
+    },
+    {
+      enabled: mode === "run" && !!routeProjectId && !!traceId,
+      staleTime: 60 * 1000,
+      retry: false,
+    },
+  );
 
   const projectIdForAccessCheck = trace.data?.projectId ?? routeProjectId;
   const hasProjectAccess = useIsAuthenticatedAndProjectMember(
@@ -67,6 +83,12 @@ export function TracePage({
     );
 
   if (!trace.data) return <div className="p-3">Loading...</div>;
+  if (mode === "run" && runProjection.isError) {
+    return <ErrorPage message="The run projection could not be loaded." />;
+  }
+  if (mode === "run" && !runProjection.data) {
+    return <div className="p-3">Loading run...</div>;
+  }
 
   const isSharedTrace = trace.data.public;
   const showPublicIndicators = isSharedTrace && !hasProjectAccess;
@@ -111,8 +133,8 @@ export function TracePage({
         itemType: "TRACE",
         breadcrumb: [
           {
-            name: "Traces",
-            href: `/project/${router.query.projectId as string}/traces`,
+            name: mode === "run" ? "Agent Runs" : "Traces",
+            href: `/project/${router.query.projectId as string}/${mode === "run" ? "runs" : "traces"}`,
           },
         ],
         showSidebarTrigger: !showPublicIndicators,
@@ -141,7 +163,7 @@ export function TracePage({
                   ? `?${queryParams.toString()}`
                   : "";
 
-                return `/project/${projectId as string}/traces/${entry.id}${finalQueryString}`;
+                return `/project/${projectId as string}/${mode === "run" ? "runs" : "traces"}/${entry.id}${finalQueryString}`;
               }}
               listKey="traces"
               size="sm"
@@ -153,7 +175,7 @@ export function TracePage({
               isPublic={trace.data.public}
               name={trace.data.name}
               timestamp={timestamp}
-              deleteRedirectUrl={`/project/${router.query.projectId as string}/traces`}
+              deleteRedirectUrl={`/project/${router.query.projectId as string}/${mode === "run" ? "runs" : "traces"}`}
             />
           </>
         ),
@@ -168,17 +190,25 @@ export function TracePage({
             isPublic={trace.data.public}
             name={trace.data.name}
             timestamp={timestamp}
-            deleteRedirectUrl={`/project/${router.query.projectId as string}/traces`}
+            deleteRedirectUrl={`/project/${router.query.projectId as string}/${mode === "run" ? "runs" : "traces"}`}
             layout="menu"
           />
         ),
       }}
     >
       <div className="flex max-h-full min-h-0 flex-1 overflow-hidden">
-        <TraceDetailBody
-          trace={trace.data}
-          context={router.query.peek !== undefined ? "peek" : "fullscreen"}
-        />
+        {mode === "run" && runProjection.data ? (
+          <RunWorkbench
+            projection={runProjection.data}
+            trace={trace.data}
+            context={router.query.peek !== undefined ? "peek" : "fullscreen"}
+          />
+        ) : (
+          <TraceDetailBody
+            trace={trace.data}
+            context={router.query.peek !== undefined ? "peek" : "fullscreen"}
+          />
+        )}
       </div>
     </Page>
   );
