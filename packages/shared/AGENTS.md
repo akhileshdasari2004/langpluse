@@ -29,6 +29,8 @@ Use root [AGENTS.md](../../AGENTS.md) for monorepo-level rules.
 - Domain model types: `src/domain/*`
 - Repository layer: `src/server/repositories/*`
 - Queue payload schemas: `src/server/queues.ts`
+- Agent execution contracts: `src/features/agent-executions/*`
+- Agent execution repositories: `src/server/agent-executions/*`
 - Queue helpers: `src/server/redis/*`
 - Dashboard/monitor query feature (data model + server-only builder/executor): `src/features/query/*`
 - Postgres schema: `prisma/schema.prisma`

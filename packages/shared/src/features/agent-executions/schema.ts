@@ -78,3 +78,20 @@ export const AgentExecutionProjectionSchema = z.object({
 export type AgentExecutionProjection = z.infer<
   typeof AgentExecutionProjectionSchema
 >;
+
+export const AgentRegistryMetadataSchema = z.record(z.string(), jsonSchema);
+
+export const AgentRegistryUpsertSchema = z.object({
+  projectId: z.string().min(1),
+  stableKey: z.string().trim().min(1).max(200),
+  name: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(2_000).nullable().optional(),
+  version: z.string().trim().max(200).nullable().optional(),
+  owner: z.string().trim().max(200).nullable().optional(),
+  team: z.string().trim().max(200).nullable().optional(),
+  metadata: AgentRegistryMetadataSchema.nullable().optional(),
+  firstSeenAt: z.date().nullable().optional(),
+  lastSeenAt: z.date().nullable().optional(),
+});
+
+export type AgentRegistryUpsert = z.infer<typeof AgentRegistryUpsertSchema>;
