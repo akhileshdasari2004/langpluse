@@ -16,6 +16,7 @@ import { stripBasePath } from "@/src/utils/redirect";
 import { Badge } from "@/src/components/ui/badge";
 import { showErrorToast } from "@/src/features/notifications/showErrorToast";
 import { useEffect } from "react";
+import { PRODUCT_NAME } from "@/src/constants";
 
 export function TracePage({
   traceId,
@@ -78,10 +79,10 @@ export function TracePage({
         asChild
         size="sm"
         variant="outline"
-        title="Back to Langfuse"
+        title={`Back to ${PRODUCT_NAME}`}
         className="px-3"
       >
-        <Link href="/">Langfuse</Link>
+        <Link href="/">{PRODUCT_NAME}</Link>
       </Button>
     ) : (
       <Button
