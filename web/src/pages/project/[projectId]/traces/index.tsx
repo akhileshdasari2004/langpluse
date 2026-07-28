@@ -13,6 +13,10 @@ import { useQueryProject } from "@/src/features/projects/hooks";
 import { V4MigrationDelayBadge } from "@/src/features/v4-migration/V4MigrationDelayBadge";
 
 export default function Traces() {
+  return <TracingPage />;
+}
+
+export function TracingPage({ mode = "trace" }: { mode?: "trace" | "run" }) {
   const router = useRouter();
   const projectId = router.query.projectId as string;
   const { isBetaEnabled, isInitializing } = useV4Beta();
@@ -42,7 +46,7 @@ export default function Traces() {
     return (
       <Page
         headerProps={{
-          title: "Tracing",
+          title: mode === "run" ? "Agent Runs" : "Tracing",
           help: {
             description:
               "A trace represents a single function/api invocation. Traces contain observations. See [docs](https://langfuse.com/docs/observability/data-model) to learn more.",
@@ -59,7 +63,7 @@ export default function Traces() {
   return (
     <Page
       headerProps={{
-        title: "Tracing",
+        title: mode === "run" ? "Agent Runs" : "Tracing",
         titleBadges: <V4MigrationDelayBadge />,
         help: {
           description: (
@@ -81,12 +85,14 @@ export default function Traces() {
           href: "https://langfuse.com/docs/observability/data-model",
         },
         tabsProps:
-          isBetaEnabled || isInitializing
+          mode === "run"
             ? undefined
-            : {
-                tabs: getTracingTabs(projectId),
-                activeTab: TRACING_TABS.TRACES,
-              },
+            : isBetaEnabled || isInitializing
+              ? undefined
+              : {
+                  tabs: getTracingTabs(projectId),
+                  activeTab: TRACING_TABS.TRACES,
+                },
       }}
     >
       {isInitializing ? (

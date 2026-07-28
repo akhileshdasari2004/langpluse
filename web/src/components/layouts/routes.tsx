@@ -79,12 +79,19 @@ export const ROUTES: Route[] = [
     section: RouteSection.Main,
   },
   {
-    title: "Agent Runs",
+    title: "Agents",
     icon: Bot,
+    group: RouteGroup.AgentOperations,
+    section: RouteSection.Main,
+    pathname: `/project/[projectId]/agents`,
+  },
+  {
+    title: "Agent Runs",
+    icon: Workflow,
     productModule: "tracing",
     group: RouteGroup.AgentOperations,
     section: RouteSection.Main,
-    pathname: `/project/[projectId]/traces`,
+    pathname: `/project/[projectId]/runs`,
   },
   {
     title: "Run Sessions",
