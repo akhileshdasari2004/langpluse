@@ -262,7 +262,7 @@ None.
 
 ### Implementation sequence and exit criteria
 
-- [ ] Define instrumentation and projection contracts.
+- [x] Define instrumentation and projection contracts.
 - [ ] Add agent registry migration/repository.
 - [ ] Add projection API and compatibility tests.
 - [ ] Add run/agent routes and workbench shell using existing trace detail.

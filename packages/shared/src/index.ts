@@ -117,6 +117,7 @@ export * from "./utils/mediaReferences";
 
 // analytics integrations (client-safe)
 export * from "./features/analytics-integrations";
+export * from "./features/agent-executions";
 export {
   ChartConfigSchema,
   DimensionSchema,
