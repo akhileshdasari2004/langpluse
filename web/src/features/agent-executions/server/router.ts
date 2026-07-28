@@ -7,7 +7,11 @@ import {
   listAgentRegistryEntries,
   upsertAgentRegistryEntry,
 } from "@langfuse/shared/src/server";
-import { AgentRegistryUpsertSchema } from "@langfuse/shared";
+import {
+  AgentRegistryUpsertSchema,
+  buildMissionControlDashboardSnapshot,
+  MissionControlDashboardInputSchema,
+} from "@langfuse/shared";
 import { env } from "@langfuse/shared/src/env";
 import {
   createTRPCRouter,
@@ -20,6 +24,18 @@ import { auditLog } from "@/src/features/audit-logs/auditLog";
 const projectInput = z.object({ projectId: z.string().min(1) });
 
 export const agentExecutionsRouter = createTRPCRouter({
+  getDashboardSummary: protectedProjectProcedure
+    .input(MissionControlDashboardInputSchema)
+    .query(({ input, ctx }) => {
+      throwIfNoProjectAccess({
+        session: ctx.session,
+        projectId: input.projectId,
+        scope: "project:read",
+      });
+
+      return buildMissionControlDashboardSnapshot(input);
+    }),
+
   getRun: protectedGetTraceProcedure
     .input(
       projectInput.extend({
