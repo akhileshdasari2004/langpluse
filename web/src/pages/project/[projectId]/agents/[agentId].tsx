@@ -33,7 +33,7 @@ export default function AgentDetail() {
     >
       <div className="grid gap-3 p-3 lg:grid-cols-2">
         <section className="rounded-md border p-4">
-          <h2 className="font-semibold">Identity</h2>
+          <h2 className="font-bold">Identity</h2>
           <dl className="mt-3 grid grid-cols-[8rem_1fr] gap-2 text-sm">
             <dt className="text-muted-foreground">Stable key</dt>
             <dd className="font-mono">{agent.data.stableKey}</dd>
@@ -54,7 +54,7 @@ export default function AgentDetail() {
           </dl>
         </section>
         <section className="rounded-md border p-4">
-          <h2 className="font-semibold">Activity</h2>
+          <h2 className="font-bold">Activity</h2>
           <dl className="mt-3 grid grid-cols-[8rem_1fr] gap-2 text-sm">
             <dt className="text-muted-foreground">First seen</dt>
             <dd>{agent.data.firstSeenAt?.toLocaleString() ?? "—"}</dd>
@@ -67,7 +67,7 @@ export default function AgentDetail() {
           </dl>
         </section>
         <section className="rounded-md border p-4 lg:col-span-2">
-          <h2 className="font-semibold">Metadata</h2>
+          <h2 className="font-bold">Metadata</h2>
           <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs">
             {JSON.stringify(agent.data.metadata ?? {}, null, 2)}
           </pre>

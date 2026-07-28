@@ -111,4 +111,40 @@ describe("projectAgentExecution", () => {
 
     expect(projection.status).toBe("FAILED");
   });
+
+  it("preserves raw telemetry identity and metadata in the semantic projection", () => {
+    const rawEvent = sourceEvent({
+      id: "raw-observation-id",
+      parentObservationId: "raw-parent-id",
+      type: "TOOL",
+      name: "crm.lookup",
+      metadata: {
+        tenantRegion: "eu-central-1",
+        "mission_control.event.category": "tool_call",
+      },
+    });
+    const projection = projectAgentExecution({
+      trace: {
+        id: "raw-trace-id",
+        projectId: "project-1",
+        name: "sales-run",
+        timestamp: new Date("2026-01-01T00:00:00.000Z"),
+        metadata: {},
+        version: null,
+      },
+      events: [rawEvent],
+    });
+
+    expect(projection.traceId).toBe("raw-trace-id");
+    expect(projection.events[0]).toMatchObject({
+      id: rawEvent.id,
+      parentEventId: rawEvent.parentObservationId,
+      observationType: rawEvent.type,
+      name: rawEvent.name,
+      metadata: rawEvent.metadata,
+      category: "TOOL_CALL",
+      categoryProvenance: "EXPLICIT",
+      confidence: 1,
+    });
+  });
 });

@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   getAgentExecutionProjection,
   getAgentRegistryEntry,
+  getTracesTable,
   listAgentRegistryEntries,
   upsertAgentRegistryEntry,
 } from "@langfuse/shared/src/server";
@@ -56,6 +57,29 @@ export const agentExecutionsRouter = createTRPCRouter({
       });
     }),
 
+  listRuns: protectedProjectProcedure
+    .input(
+      projectInput.extend({
+        limit: z.number().int().min(1).max(100).default(50),
+        page: z.number().int().min(0).default(0),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      throwIfNoProjectAccess({
+        session: ctx.session,
+        projectId: input.projectId,
+        scope: "project:read",
+      });
+
+      return getTracesTable({
+        projectId: input.projectId,
+        filter: [],
+        orderBy: { column: "timestamp", order: "DESC" },
+        limit: input.limit,
+        page: input.page,
+      });
+    }),
+
   listAgents: protectedProjectProcedure
     .input(
       projectInput.extend({
@@ -89,7 +113,7 @@ export const agentExecutionsRouter = createTRPCRouter({
       return agent;
     }),
 
-  upsertAgent: protectedProjectProcedure
+  upsertAgentMetadata: protectedProjectProcedure
     .input(AgentRegistryUpsertSchema)
     .mutation(async ({ input, ctx }) => {
       throwIfNoProjectAccess({

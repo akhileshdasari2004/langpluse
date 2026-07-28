@@ -22,7 +22,7 @@ export function RunWorkbenchHeader() {
     >
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <Badge variant={statusVariant[run.status]}>{run.status}</Badge>
-        <span className="font-medium">{run.agent.name}</span>
+        <span className="font-bold">{run.agent.name}</span>
         {run.agent.version && (
           <Badge variant="outline">v{run.agent.version}</Badge>
         )}

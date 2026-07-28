@@ -33,7 +33,7 @@ export default function Agents() {
           </div>
         ) : agents.data?.length === 0 ? (
           <div className="rounded-md border p-6">
-            <h2 className="font-semibold">No registered agents yet</h2>
+            <h2 className="font-bold">No registered agents yet</h2>
             <p className="text-muted-foreground mt-1 text-sm">
               Agents appear here when their stable identity is registered from
               execution metadata.
@@ -56,7 +56,7 @@ export default function Agents() {
                   <TableRow key={agent.id}>
                     <TableCell density="comfortable">
                       <Link
-                        className="font-medium hover:underline"
+                        className="font-bold hover:underline"
                         href={`/project/${projectId}/agents/${agent.id}`}
                       >
                         {agent.name}
