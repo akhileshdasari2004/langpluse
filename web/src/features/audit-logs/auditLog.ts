@@ -18,6 +18,7 @@ export type AuditableResource =
   | "datasetRun"
   | "datasetRunItem"
   | "trace"
+  | "agent"
   | "project"
   | "observation"
   | "score"

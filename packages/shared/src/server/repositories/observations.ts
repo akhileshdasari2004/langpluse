@@ -132,6 +132,7 @@ export type GetObservationsForTraceOpts<IncludeIO extends boolean> = {
   projectId: string;
   timestamp?: Date;
   includeIO?: IncludeIO;
+  includeMetadata?: boolean;
   preferredClickhouseService?: PreferredClickhouseService;
 };
 
@@ -143,6 +144,7 @@ export const getObservationsForTrace = async <IncludeIO extends boolean>(
     projectId,
     timestamp,
     includeIO = false,
+    includeMetadata = false,
     preferredClickhouseService,
   } = opts;
 
@@ -163,7 +165,8 @@ export const getObservationsForTrace = async <IncludeIO extends boolean>(
     level,
     status_message,
     version,
-    ${includeIO === true ? "input, output, metadata," : ""}
+    ${includeIO === true ? "input, output," : ""}
+    ${includeIO === true || includeMetadata ? "metadata," : ""}
     provided_model_name,
     internal_model_id,
     model_parameters,
