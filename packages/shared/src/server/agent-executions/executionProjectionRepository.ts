@@ -37,7 +37,7 @@ export async function getAgentExecutionProjection({
           projectId: trace.projectId,
           traceId: trace.id,
           timestamp: trace.timestamp,
-          selectIOAndMetadata: true,
+          selectMetadata: true,
         })
       ).observations
     : await getObservationsForTrace({

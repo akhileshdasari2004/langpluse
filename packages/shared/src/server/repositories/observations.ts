@@ -527,6 +527,7 @@ export type ObservationTableQuery = {
   limit?: number;
   offset?: number;
   selectIOAndMetadata?: boolean;
+  selectMetadata?: boolean;
   renderingProps?: RenderingProps;
   /**
    * Per-field I/O size cap (events table only): fields whose full length is
