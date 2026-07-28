@@ -264,11 +264,18 @@ None.
 
 - [x] Define instrumentation and projection contracts.
 - [x] Add agent registry migration/repository.
-- [ ] Add projection API and compatibility tests.
-- [ ] Add run/agent routes and workbench shell using existing trace detail.
-- [ ] Add enterprise seed scenario.
+- [x] Add projection API and compatibility tests.
+- [x] Add run/agent routes and workbench shell using existing trace detail.
+- [x] Add enterprise seed scenario.
 - [ ] Validate RBAC, tenant isolation, legacy routes, ingestion, and production
       build.
+  - [x] Full monorepo typecheck and production web build.
+  - [x] Prisma schema validation, changed-file lint, projection compatibility,
+        and repository tenant-boundary tests.
+  - [ ] Run the enterprise seed against a configured PostgreSQL/ClickHouse
+        stack and verify both run and legacy trace URLs with authenticated RBAC
+        cases. The current workspace has no `.env` or local service
+        credentials.
 
 The milestone is complete only when a seeded sales-email run opens through both
 the new run URL and the existing trace URL with equivalent raw telemetry.
