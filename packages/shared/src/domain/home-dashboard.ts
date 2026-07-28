@@ -18,7 +18,7 @@ import type { DashboardDefinition } from "../server/services/DashboardService/ty
  */
 export const LANGFUSE_HOME_DASHBOARD_ID = "langfuse-home-dashboard";
 
-export const HOME_DASHBOARD_PRESET_IDS = [
+export const LEGACY_HOME_DASHBOARD_PRESET_IDS = [
   "home-traces",
   "home-model-costs",
   "home-scores-table",
@@ -31,6 +31,32 @@ export const HOME_DASHBOARD_PRESET_IDS = [
   "home-latency-table-observations",
   "home-generation-latency",
   "home-score-analytics",
+] as const;
+
+export const MISSION_CONTROL_DASHBOARD_PRESET_IDS = [
+  "mission-control-active-agents",
+  "mission-control-running-executions",
+  "mission-control-successful-executions",
+  "mission-control-failed-executions",
+  "mission-control-average-latency",
+  "mission-control-execution-quality",
+  "mission-control-memory-accuracy",
+  "mission-control-tool-success-rate",
+  "mission-control-average-cost",
+  "mission-control-recent-executions",
+  "mission-control-system-health",
+  "mission-control-top-failing-agents",
+  "mission-control-top-used-tools",
+  "mission-control-execution-trend",
+  "mission-control-live-activity",
+] as const;
+
+// Legacy presets remain registered because curated cards can be copied into
+// custom dashboards. The Mission Control definition below changes only the
+// default landing dashboard; it does not invalidate saved dashboard layouts.
+export const HOME_DASHBOARD_PRESET_IDS = [
+  ...LEGACY_HOME_DASHBOARD_PRESET_IDS,
+  ...MISSION_CONTROL_DASHBOARD_PRESET_IDS,
 ] as const;
 
 export type HomeDashboardPresetId = (typeof HOME_DASHBOARD_PRESET_IDS)[number];
@@ -55,40 +81,35 @@ const placement = (
 
 export const LANGFUSE_HOME_DASHBOARD_DEFINITION: DashboardDefinition = {
   widgets: [
-    // Grid rows are 16:9-proportional to column width (see DashboardGrid), so
-    // tiles grow with the viewport while the Home cards' content has fixed
-    // minimum heights. Cards adapt to their tile (charts stretch to absorb
-    // extra height; a too-short tile scrolls internally), so sizes below
-    // target a comfortable content fit at typical ~1300–1500px grid widths
-    // rather than the worst case. Below 1024px the grid stacks. (LFE-10813)
-    // Row 1: overview tables
-    placement("home-traces", 0, 0, 4, 5),
-    placement("home-model-costs", 4, 0, 4, 5),
-    placement("home-scores-table", 8, 0, 4, 5),
-    // Row 2: traffic + usage time series (tabbed cards with headline metrics
-    // have the largest intrinsic height)
-    placement("home-traces-obs-time-series", 0, 5, 6, 6),
-    placement("home-model-usage", 6, 5, 6, 6),
-    // Row 3: users + scores over time
-    placement("home-users", 0, 11, 6, 6),
-    placement("home-chart-scores", 6, 11, 6, 6),
-    // Row 4: latency percentile tables
-    placement("home-latency-table-traces", 0, 17, 4, 5),
-    placement("home-latency-table-generations", 4, 17, 4, 5),
-    placement("home-latency-table-observations", 8, 17, 4, 5),
-    // Row 5+: full-width analytics
-    placement("home-generation-latency", 0, 22, 12, 6),
-    placement("home-score-analytics", 0, 28, 12, 6),
+    // Compact operational metrics.
+    placement("mission-control-active-agents", 0, 0, 3, 3),
+    placement("mission-control-running-executions", 3, 0, 3, 3),
+    placement("mission-control-successful-executions", 6, 0, 3, 3),
+    placement("mission-control-failed-executions", 9, 0, 3, 3),
+    placement("mission-control-average-latency", 0, 3, 3, 3),
+    placement("mission-control-execution-quality", 3, 3, 3, 3),
+    placement("mission-control-memory-accuracy", 6, 3, 3, 3),
+    placement("mission-control-tool-success-rate", 9, 3, 3, 3),
+    // Cost and the execution substrate.
+    placement("mission-control-average-cost", 0, 6, 3, 3),
+    placement("mission-control-system-health", 3, 6, 9, 3),
+    // Live operational overview.
+    placement("mission-control-execution-trend", 0, 9, 8, 7),
+    placement("mission-control-live-activity", 8, 9, 4, 7),
+    // Investigation queues.
+    placement("mission-control-recent-executions", 0, 16, 8, 7),
+    placement("mission-control-top-failing-agents", 8, 16, 4, 7),
+    placement("mission-control-top-used-tools", 0, 23, 12, 6),
   ],
 };
 
 export const LANGFUSE_HOME_DASHBOARD = {
   id: LANGFUSE_HOME_DASHBOARD_ID,
-  name: "Langfuse Home",
+  name: "Mission Control",
   description:
-    "Overview of traces, costs, scores, usage, and latencies in this project. Shown on the project home page.",
+    "Enterprise AI agent execution health, quality, cost, and live operational activity.",
   definition: LANGFUSE_HOME_DASHBOARD_DEFINITION,
   filters: [],
   createdAt: "2026-07-06T00:00:00.000Z",
-  updatedAt: "2026-07-09T00:00:00.000Z",
+  updatedAt: "2026-07-28T00:00:00.000Z",
 };

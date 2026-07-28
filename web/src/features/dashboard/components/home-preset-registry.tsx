@@ -12,6 +12,10 @@ import { ChartScores } from "@/src/features/dashboard/components/ChartScores";
 import { LatencyTable } from "@/src/features/dashboard/components/LatencyTables";
 import { GenerationLatencyChart } from "@/src/features/dashboard/components/LatencyChart";
 import { ScoreAnalytics } from "@/src/features/dashboard/components/score-analytics/ScoreAnalytics";
+import {
+  MissionControlPreset,
+  type MissionControlPresetKind,
+} from "@/src/features/mission-control-dashboard/components/MissionControlPreset";
 
 /**
  * Props bag a "preset" dashboard placement is rendered with. Derived by
@@ -35,6 +39,11 @@ export interface PresetWidgetContext {
   syncId: string;
   className: string;
 }
+
+const missionControlPreset = (kind: MissionControlPresetKind) =>
+  function MissionControlPresetRenderer(context: PresetWidgetContext) {
+    return <MissionControlPreset kind={kind} context={context} />;
+  };
 
 /**
  * presetId → existing Home card component, rendered verbatim with its
@@ -201,6 +210,28 @@ const HOME_PRESETS: Record<
       syncId={ctx.syncId}
     />
   ),
+  "mission-control-active-agents": missionControlPreset("activeAgents"),
+  "mission-control-running-executions":
+    missionControlPreset("runningExecutions"),
+  "mission-control-successful-executions":
+    missionControlPreset("successfulExecutions"),
+  "mission-control-failed-executions":
+    missionControlPreset("failedExecutions"),
+  "mission-control-average-latency": missionControlPreset("averageLatency"),
+  "mission-control-execution-quality":
+    missionControlPreset("executionQuality"),
+  "mission-control-memory-accuracy":
+    missionControlPreset("memoryRetrievalAccuracy"),
+  "mission-control-tool-success-rate": missionControlPreset("toolSuccessRate"),
+  "mission-control-average-cost": missionControlPreset("averageCost"),
+  "mission-control-recent-executions":
+    missionControlPreset("recentExecutions"),
+  "mission-control-system-health": missionControlPreset("systemHealth"),
+  "mission-control-top-failing-agents":
+    missionControlPreset("topFailingAgents"),
+  "mission-control-top-used-tools": missionControlPreset("topUsedTools"),
+  "mission-control-execution-trend": missionControlPreset("executionTrend"),
+  "mission-control-live-activity": missionControlPreset("liveActivity"),
 };
 
 /**
@@ -270,6 +301,81 @@ export const HOME_PRESET_METADATA: Record<
     name: "Score Analytics",
     description: "Per-score charts and distributions for selected scores",
     illustration: "HISTOGRAM",
+  },
+  "mission-control-active-agents": {
+    name: "Active Agents",
+    description: "Agents executing work in the selected window",
+    illustration: "NUMBER",
+  },
+  "mission-control-running-executions": {
+    name: "Running Executions",
+    description: "Enterprise workflows currently in progress",
+    illustration: "NUMBER",
+  },
+  "mission-control-successful-executions": {
+    name: "Successful Executions",
+    description: "Completed executions in the selected window",
+    illustration: "NUMBER",
+  },
+  "mission-control-failed-executions": {
+    name: "Failed Executions",
+    description: "Executions ending in an unrecovered failure",
+    illustration: "NUMBER",
+  },
+  "mission-control-average-latency": {
+    name: "Average Latency",
+    description: "Mean end-to-end execution duration",
+    illustration: "NUMBER",
+  },
+  "mission-control-execution-quality": {
+    name: "Execution Quality Score",
+    description: "Mean normalized execution quality",
+    illustration: "NUMBER",
+  },
+  "mission-control-memory-accuracy": {
+    name: "Memory Retrieval Accuracy",
+    description: "Relevant retrievals across agent decisions",
+    illustration: "NUMBER",
+  },
+  "mission-control-tool-success-rate": {
+    name: "Tool Success Rate",
+    description: "Tool calls completed without terminal error",
+    illustration: "NUMBER",
+  },
+  "mission-control-average-cost": {
+    name: "Average Cost Per Execution",
+    description: "Mean model and tool cost for each execution",
+    illustration: "NUMBER",
+  },
+  "mission-control-recent-executions": {
+    name: "Recent Enterprise Executions",
+    description: "Latest production sales-email workflow runs",
+    illustration: "PIVOT_TABLE",
+  },
+  "mission-control-system-health": {
+    name: "System Health",
+    description: "Availability and latency of execution dependencies",
+    illustration: "PIVOT_TABLE",
+  },
+  "mission-control-top-failing-agents": {
+    name: "Top Failing Agents",
+    description: "Agents ranked by unrecovered failures",
+    illustration: "HORIZONTAL_BAR",
+  },
+  "mission-control-top-used-tools": {
+    name: "Top Used Tools",
+    description: "Tools ranked by execution call volume",
+    illustration: "HORIZONTAL_BAR",
+  },
+  "mission-control-execution-trend": {
+    name: "Execution Trend (24h)",
+    description: "Hourly throughput split by execution outcome",
+    illustration: "AREA_TIME_SERIES",
+  },
+  "mission-control-live-activity": {
+    name: "Live Activity Feed",
+    description: "Current orchestration, tool, memory, and approval events",
+    illustration: "BAR_TIME_SERIES",
   },
 };
 

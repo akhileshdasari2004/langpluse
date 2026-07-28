@@ -3,6 +3,7 @@ import {
   HOME_DASHBOARD_PRESET_IDS,
   LANGFUSE_HOME_DASHBOARD,
   LANGFUSE_HOME_DASHBOARD_ID,
+  MISSION_CONTROL_DASHBOARD_PRESET_IDS,
 } from "./home-dashboard";
 import { DashboardDomainSchema } from "../server/services/DashboardService/types";
 
@@ -25,13 +26,13 @@ describe("LANGFUSE_HOME_DASHBOARD", () => {
     );
   });
 
-  it("places every registered preset exactly once", () => {
+  it("places every Mission Control preset exactly once", () => {
     const placedPresetIds = LANGFUSE_HOME_DASHBOARD.definition.widgets.flatMap(
       (w) => (w.type === "preset" ? [w.presetId] : []),
     );
 
     expect([...placedPresetIds].sort()).toEqual(
-      [...HOME_DASHBOARD_PRESET_IDS].sort(),
+      [...MISSION_CONTROL_DASHBOARD_PRESET_IDS].sort(),
     );
     // Placement ids must be unique within the dashboard (react keys,
     // scheduler ids, delete targets).
@@ -39,6 +40,13 @@ describe("LANGFUSE_HOME_DASHBOARD", () => {
       (w) => w.id,
     );
     expect(new Set(placementIds).size).toBe(placementIds.length);
+  });
+
+  it("keeps legacy presets available to saved custom dashboards", () => {
+    expect(HOME_DASHBOARD_PRESET_IDS).toContain("home-traces");
+    expect(HOME_DASHBOARD_PRESET_IDS).toContain(
+      "mission-control-active-agents",
+    );
   });
 
   it("fits the 12-column grid without overlapping tiles", () => {
