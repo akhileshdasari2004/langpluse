@@ -56,6 +56,7 @@ export function MissionControlPreset(props: {
       <MetricCard
         metricId={metricId}
         metric={dashboard.data?.metrics[metricId]}
+        projectId={props.context.projectId}
         isLoading={dashboard.isPending}
         isError={dashboard.isError}
         className={props.context.className}

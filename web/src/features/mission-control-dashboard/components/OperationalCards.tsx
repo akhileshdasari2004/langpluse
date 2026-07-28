@@ -31,7 +31,7 @@ export function RecentExecutionsCard(props: {
   return (
     <MissionControlCard
       title="Recent Enterprise Executions"
-      description="Latest production runs across the seeded sales-email workflow"
+      description="Latest runs across the seeded enterprise sales-email workflow"
       isLoading={props.isLoading}
       isError={props.isError}
       className={props.className}

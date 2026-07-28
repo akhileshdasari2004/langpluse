@@ -12,9 +12,9 @@ export const MissionControlDashboardInputSchema = z
   })
   .refine(
     ({ from, to }) =>
-      to.getTime() - from.getTime() <= 31 * 24 * 60 * 60 * 1_000,
+      to.getTime() - from.getTime() <= 366 * 24 * 60 * 60 * 1_000,
     {
-      message: "Dashboard time range cannot exceed 31 days",
+      message: "Dashboard time range cannot exceed 366 days",
       path: ["from"],
     },
   );

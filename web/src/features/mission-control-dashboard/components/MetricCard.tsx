@@ -13,7 +13,9 @@ import {
   Gauge,
   Timer,
   Wrench,
+  ArrowUpRight,
 } from "lucide-react";
+import Link from "next/link";
 import { MissionControlCard } from "./MissionControlCard";
 import { MISSION_CONTROL_METRICS } from "../lib/dashboard-model";
 import { cn } from "@/src/utils/tailwind";
@@ -33,6 +35,7 @@ const icons: Record<MissionControlMetricId, LucideIcon> = {
 export function MetricCard(props: {
   metricId: MissionControlMetricId;
   metric?: MissionControlMetric;
+  projectId: string;
   isLoading: boolean;
   isError: boolean;
   className?: string;
@@ -54,9 +57,15 @@ export function MetricCard(props: {
       isError={props.isError}
       className={props.className}
       action={
-        <span className="rounded-md border bg-background/80 p-1.5 shadow-xs">
+        <Link
+          href={`/project/${props.projectId}/${definition.drilldown}`}
+          className="rounded-md border bg-background/80 p-1.5 shadow-xs transition-colors hover:bg-muted"
+          title={`${definition.formula}. ${definition.nullBehavior}. Open ${definition.drilldown}.`}
+        >
           <Icon className="text-muted-foreground h-4 w-4" />
-        </span>
+          <ArrowUpRight className="sr-only h-3 w-3" />
+          <span className="sr-only">Open {definition.drilldown}</span>
+        </Link>
       }
     >
       {props.metric ? (

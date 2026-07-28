@@ -23,7 +23,7 @@ describe("MissionControlDashboardInputSchema", () => {
     });
     const overlong = MissionControlDashboardInputSchema.safeParse({
       projectId: "project-1",
-      from: new Date("2026-06-01T00:00:00.000Z"),
+      from: new Date("2025-06-01T00:00:00.000Z"),
       to: new Date("2026-07-28T00:00:00.000Z"),
     });
 
