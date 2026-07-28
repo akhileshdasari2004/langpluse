@@ -4,6 +4,7 @@ import { deepChainScenario } from "./deep-chain";
 import { longSessionScenario } from "./long-session";
 import { manyTracesScenario } from "./many-traces";
 import { scoredTracesScenario } from "./scored-traces";
+import { salesEmailAgentScenario } from "./sales-email-agent";
 import { sessionShapesScenario } from "./session-shapes";
 import { supportAgentScenario } from "./support-agent";
 import { traceTreeScenario } from "./trace-tree";
@@ -19,6 +20,7 @@ export const scenarios: Record<string, ScenarioDefinition> = {
   "long-session": longSessionScenario,
   "many-traces": manyTracesScenario,
   "scored-traces": scoredTracesScenario,
+  "sales-email-agent": salesEmailAgentScenario,
   "session-shapes": sessionShapesScenario,
   "annotation-queue": annotationQueueScenario,
   "support-agent": supportAgentScenario,

@@ -31,6 +31,13 @@ export const traceLink = (
 ): string =>
   `${ctx.baseUrl}/project/${ctx.projectId}/traces/${encodeURIComponent(traceId)}?timestamp=${encodeURIComponent(new Date(timestampMs).toISOString())}`;
 
+export const runLink = (
+  ctx: ScenarioContext,
+  traceId: string,
+  timestampMs: number,
+): string =>
+  `${ctx.baseUrl}/project/${ctx.projectId}/runs/${encodeURIComponent(traceId)}?timestamp=${encodeURIComponent(new Date(timestampMs).toISOString())}`;
+
 export const sessionLink = (ctx: ScenarioContext, sessionId: string): string =>
   `${ctx.baseUrl}/project/${ctx.projectId}/sessions/${encodeURIComponent(sessionId)}`;
 
