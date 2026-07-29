@@ -46,42 +46,44 @@ model Session {
 }
 
 model User {
-  id                        String                      @id @default(cuid())
-  name                      String?
-  email                     String?                     @unique
-  emailVerified             DateTime?                   @map("email_verified")
-  password                  String?
-  image                     String?
-  admin                     Boolean                     @default(false)
-  v4BetaEnabled             Boolean                     @default(false) @map("v4_beta_enabled")
-  accounts                  Account[]
-  sessions                  Session[]
-  organizationMemberships   OrganizationMembership[]
-  projectMemberships        ProjectMembership[]
-  invitations               MembershipInvitation[]
-  createdAt                 DateTime                    @default(now()) @map("created_at")
-  updatedAt                 DateTime                    @default(now()) @updatedAt @map("updated_at")
-  featureFlags              String[]                    @default([]) @map("feature_flags")
-  annotatedLockedItem       AnnotationQueueItem[]       @relation("LockedByUser")
-  annotatedCompletedItem    AnnotationQueueItem[]       @relation("AnnotatorUser")
-  dashboardWidgetsCreated   DashboardWidget[]           @relation("CreatedByUser")
-  dashboardWidgetsUpdated   DashboardWidget[]           @relation("UpdatedByUser")
-  dashboardCreated          Dashboard[]                 @relation("CreatedByUser")
-  dashboardUpdated          Dashboard[]                 @relation("UpdatedByUser")
-  tableViewPresetCreated    TableViewPreset[]           @relation("CreatedByUser")
-  tableViewPresetUpdated    TableViewPreset[]           @relation("UpdatedByUser")
-  monitorsCreated           Monitor[]                   @relation("CreatedByUser")
-  monitorsUpdated           Monitor[]                   @relation("UpdatedByUser")
-  annotationQueueAssignment AnnotationQueueAssignment[]
-  surveys                   Survey[]
-  commentReactions          CommentReaction[]
-  notificationPreferences   NotificationPreference[]
-  defaultViews              DefaultView[]               @relation("DefaultViewUser")
-  inAppAgentConversations   InAppAgentConversation[]    @relation("InAppAgentConversationCreatedByUser")
-  inAppAgentRuns            InAppAgentRun[]             @relation("InAppAgentRunTriggeredByUser")
-  apiKeysCreated            ApiKey[]                    @relation("ApiKeyCreatedByUser")
-  agentsCreated             Agent[]                     @relation("AgentCreatedByUser")
-  agentsUpdated             Agent[]                     @relation("AgentUpdatedByUser")
+  id                         String                      @id @default(cuid())
+  name                       String?
+  email                      String?                     @unique
+  emailVerified              DateTime?                   @map("email_verified")
+  password                   String?
+  image                      String?
+  admin                      Boolean                     @default(false)
+  v4BetaEnabled              Boolean                     @default(false) @map("v4_beta_enabled")
+  accounts                   Account[]
+  sessions                   Session[]
+  organizationMemberships    OrganizationMembership[]
+  projectMemberships         ProjectMembership[]
+  invitations                MembershipInvitation[]
+  createdAt                  DateTime                    @default(now()) @map("created_at")
+  updatedAt                  DateTime                    @default(now()) @updatedAt @map("updated_at")
+  featureFlags               String[]                    @default([]) @map("feature_flags")
+  annotatedLockedItem        AnnotationQueueItem[]       @relation("LockedByUser")
+  annotatedCompletedItem     AnnotationQueueItem[]       @relation("AnnotatorUser")
+  dashboardWidgetsCreated    DashboardWidget[]           @relation("CreatedByUser")
+  dashboardWidgetsUpdated    DashboardWidget[]           @relation("UpdatedByUser")
+  dashboardCreated           Dashboard[]                 @relation("CreatedByUser")
+  dashboardUpdated           Dashboard[]                 @relation("UpdatedByUser")
+  tableViewPresetCreated     TableViewPreset[]           @relation("CreatedByUser")
+  tableViewPresetUpdated     TableViewPreset[]           @relation("UpdatedByUser")
+  monitorsCreated            Monitor[]                   @relation("CreatedByUser")
+  monitorsUpdated            Monitor[]                   @relation("UpdatedByUser")
+  annotationQueueAssignment  AnnotationQueueAssignment[]
+  surveys                    Survey[]
+  commentReactions           CommentReaction[]
+  notificationPreferences    NotificationPreference[]
+  defaultViews               DefaultView[]               @relation("DefaultViewUser")
+  inAppAgentConversations    InAppAgentConversation[]    @relation("InAppAgentConversationCreatedByUser")
+  inAppAgentRuns             InAppAgentRun[]             @relation("InAppAgentRunTriggeredByUser")
+  apiKeysCreated             ApiKey[]                    @relation("ApiKeyCreatedByUser")
+  agentsCreated              Agent[]                     @relation("AgentCreatedByUser")
+  agentsUpdated              Agent[]                     @relation("AgentUpdatedByUser")
+  simulationScenariosCreated SimulationScenario[]        @relation("SimulationScenarioCreatedByUser")
+  simulationRunsTriggered    SimulationRun[]             @relation("SimulationRunTriggeredByUser")
 
   @@map("users")
 }
@@ -186,6 +188,8 @@ model Project {
   InAppAgentRun                 InAppAgentRun[]
   InAppAgentPendingToolApproval InAppAgentPendingToolApproval[]
   agents                        Agent[]
+  simulationScenarios           SimulationScenario[]
+  simulationRuns                SimulationRun[]
 
   @@index([orgId])
   @@map("projects")
@@ -217,6 +221,49 @@ model Agent {
   @@index([createdBy])
   @@index([updatedBy])
   @@map("agents")
+}
+
+model SimulationScenario {
+  id                String          @id @default(cuid())
+  projectId         String          @map("project_id")
+  project           Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceRunId       String          @map("source_run_id")
+  name              String
+  definition        Json            @db.JsonB
+  definitionVersion Int             @default(1) @map("definition_version")
+  createdByUserId   String?         @map("created_by_user_id")
+  createdByUser     User?           @relation("SimulationScenarioCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @default(now()) @updatedAt @map("updated_at")
+  runs              SimulationRun[]
+
+  @@index([projectId, createdAt(sort: Desc), id])
+  @@index([projectId, sourceRunId, createdAt(sort: Desc), id])
+  @@map("simulation_scenarios")
+}
+
+model SimulationRun {
+  id                String             @id @default(cuid())
+  projectId         String             @map("project_id")
+  project           Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  scenarioId        String             @map("scenario_id")
+  scenario          SimulationScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  status            String
+  deterministicSeed String             @map("deterministic_seed")
+  model             String?
+  result            Json?              @db.JsonB
+  error             String?
+  cancelRequestedAt DateTime?          @map("cancel_requested_at")
+  startedAt         DateTime?          @map("started_at")
+  finishedAt        DateTime?          @map("finished_at")
+  triggeredByUserId String?            @map("triggered_by_user_id")
+  triggeredByUser   User?              @relation("SimulationRunTriggeredByUser", fields: [triggeredByUserId], references: [id], onDelete: SetNull)
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  @@index([projectId, status, createdAt(sort: Desc), id])
+  @@index([scenarioId, createdAt(sort: Desc), id])
+  @@map("simulation_runs")
 }
 
 enum ApiKeyScope {
