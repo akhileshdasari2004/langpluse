@@ -445,7 +445,7 @@ Displays estimated improvement.
 
 ## Simulation Engine
 
-Status: TODO
+Status: IN PROGRESS
 
 Replay execution under
 

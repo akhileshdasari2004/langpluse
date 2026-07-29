@@ -1030,6 +1030,8 @@ None initially. Reuse installed AI SDK providers and the in-app-agent runtime.
 
 ## Milestone 10 — Simulation
 
+**Status: IN PROGRESS**
+
 **PRD feature:** Simulation Engine.
 
 **Independent outcome:** users can rerun an execution under CRM offline, Slack
