@@ -24,15 +24,9 @@ import {
   BadgeCheck,
   ChevronsUpDown,
   ChevronDownIcon,
-  ExternalLink,
   Grid2X2,
-  HardDriveDownload,
-  Info,
-  Map,
-  Newspaper,
   X,
 } from "lucide-react";
-import { SiGithub } from "react-icons/si";
 import { VERSION } from "@/src/constants";
 import {
   DropdownMenu,
@@ -535,26 +529,10 @@ const DemoBadge = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip="Use Demo App to create traces"
-              variant="cta"
-            >
-              <Link
-                href="https://langfuse.com/docs/demo"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ExternalLink className="h-4 w-4" />
-                <span>Use Demo App</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Mission Control workspaces">
+            <SidebarMenuButton asChild tooltip="Langpluse workspaces">
               <Link href="/">
                 <Grid2X2 className="h-4 w-4" />
-                <span>Mission Control workspaces</span>
+                <span>Langpluse workspaces</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -614,6 +592,12 @@ const VersionLabel = ({ state }: { state: SidebarVersionState }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+        <DropdownMenuItem disabled>
+          {state.deployment === "self-hosted"
+            ? "Self-hosted deployment"
+            : "Managed Langpluse deployment"}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {update ? (
           <>
             <DropdownMenuLabel>
@@ -636,15 +620,6 @@ const VersionLabel = ({ state }: { state: SidebarVersionState }) => {
             <DropdownMenuSeparator />
           </>
         )}
-        <DropdownMenuItem asChild>
-          <Link
-            href="https://github.com/langfuse/langfuse/releases"
-            target="_blank"
-          >
-            <SiGithub size={16} className="mr-2" />
-            Releases
-          </Link>
-        </DropdownMenuItem>
         {state.deployment === "self-hosted" && (
           <DropdownMenuItem asChild>
             <Link href="/background-migrations">
@@ -659,40 +634,6 @@ const VersionLabel = ({ state }: { state: SidebarVersionState }) => {
               )}
             </Link>
           </DropdownMenuItem>
-        )}
-        <DropdownMenuItem asChild>
-          <Link href="https://langfuse.com/changelog" target="_blank">
-            <Newspaper size={16} className="mr-2" />
-            Changelog
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="https://langfuse.com/roadmap" target="_blank">
-            <Map size={16} className="mr-2" />
-            Roadmap
-          </Link>
-        </DropdownMenuItem>
-        {state.deployment === "self-hosted" && (
-          <DropdownMenuItem asChild>
-            <Link href="https://langfuse.com/pricing-self-host" target="_blank">
-              <Info size={16} className="mr-2" />
-              Compare Versions
-            </Link>
-          </DropdownMenuItem>
-        )}
-        {update && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href="https://langfuse.com/docs/deployment/self-host#update"
-                target="_blank"
-              >
-                <HardDriveDownload size={16} className="mr-2" />
-                Update
-              </Link>
-            </DropdownMenuItem>
-          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

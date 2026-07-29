@@ -80,8 +80,8 @@ export function MemoryRelationships({
             No relationships match these filters
           </h3>
           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-            Mission Control only displays relationships emitted by the memory
-            system; it does not infer links between customer records.
+            Langpluse only displays relationships emitted by the memory system;
+            it does not infer links between customer records.
           </p>
         </div>
       </div>

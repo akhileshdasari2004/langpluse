@@ -185,7 +185,7 @@ function DecisionEmptyState({
         <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
           {isFiltered
             ? "Broaden the branch, risk, or local search filter to inspect more recorded decision paths."
-            : "This run did not emit decision events. Mission Control does not infer considered alternatives from unrelated spans."}
+            : "This run did not emit decision events. Langpluse does not infer considered alternatives from unrelated spans."}
         </p>
         {isFiltered ? (
           <Button

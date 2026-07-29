@@ -219,7 +219,7 @@ export function DecisionInspector({
           >
             <p className="text-sm leading-relaxed">
               {decision.reason ??
-                "No reasoning summary was emitted. Mission Control does not infer private chain-of-thought."}
+                "No reasoning summary was emitted. Langpluse does not infer private chain-of-thought."}
             </p>
           </EvidenceSection>
 

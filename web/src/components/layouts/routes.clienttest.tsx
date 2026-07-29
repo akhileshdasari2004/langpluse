@@ -4,14 +4,14 @@ import { ROUTES } from "./routes";
 const routeTitles = ROUTES.map((route) => route.title);
 const routePathnames = ROUTES.map((route) => route.pathname);
 
-describe("Mission Control navigation", () => {
+describe("Langpluse navigation", () => {
   it("exposes the agent execution surfaces", () => {
     expect(routeTitles).toEqual(
       expect.arrayContaining([
-        "Overview",
+        "Dashboard",
         "Dashboards",
-        "Agent Runs",
-        "Run Sessions",
+        "Runs",
+        "Execution Groups",
         "Monitors",
         "Automations",
         "Settings",
@@ -19,7 +19,7 @@ describe("Mission Control navigation", () => {
     );
   });
 
-  it("does not expose removed Langfuse product surfaces", () => {
+  it("does not expose legacy-first product surfaces", () => {
     expect(routeTitles).not.toEqual(
       expect.arrayContaining([
         "Organizations",

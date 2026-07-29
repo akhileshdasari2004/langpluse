@@ -66,7 +66,7 @@ export const ROUTES: Route[] = [
     section: RouteSection.Main,
   },
   {
-    title: "Overview",
+    title: "Dashboard",
     pathname: `/project/[projectId]`,
     icon: Home,
     section: RouteSection.Main,
@@ -86,7 +86,7 @@ export const ROUTES: Route[] = [
     pathname: `/project/[projectId]/agents`,
   },
   {
-    title: "Agent Runs",
+    title: "Runs",
     icon: Workflow,
     productModule: "tracing",
     group: RouteGroup.AgentOperations,
@@ -94,7 +94,7 @@ export const ROUTES: Route[] = [
     pathname: `/project/[projectId]/runs`,
   },
   {
-    title: "Run Sessions",
+    title: "Execution Groups",
     icon: Clock,
     productModule: "tracing",
     group: RouteGroup.AgentOperations,

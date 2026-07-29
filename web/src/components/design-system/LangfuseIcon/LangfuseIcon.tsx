@@ -10,6 +10,6 @@ export const LangfuseIcon = ({ size = 32 }: LangfuseIconProps) => (
     src={`${env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg`}
     width={size}
     height={size}
-    alt="Mission Control icon"
+    alt="Langpluse icon"
   />
 );

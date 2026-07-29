@@ -44,7 +44,7 @@ export default function SSOInitiate() {
     return (
       <>
         <Head>
-          <title>Sign-in Error | Mission Control</title>
+          <title>Sign-in Error | Langpluse</title>
         </Head>
         <ErrorPageWithSentry title="SSO Sign-in Failed" message={error} />
       </>
@@ -55,7 +55,7 @@ export default function SSOInitiate() {
   return (
     <>
       <Head>
-        <title>Signing in | Mission Control</title>
+        <title>Signing in | Langpluse</title>
       </Head>
       <Spinner message="Redirecting to your identity provider..." />
     </>

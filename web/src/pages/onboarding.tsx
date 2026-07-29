@@ -7,7 +7,7 @@ export default function OnboardingPage() {
   return (
     <>
       <Head>
-        <title>Onboarding | Mission Control</title>
+        <title>Onboarding | Langpluse</title>
       </Head>
       <OnboardingSurvey />
     </>

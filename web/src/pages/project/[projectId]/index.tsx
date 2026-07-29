@@ -164,7 +164,7 @@ export default function Dashboard() {
     : (homeDashboard.data?.dashboard ?? null);
   const dashboardId =
     displayedDashboard?.id ?? peekId ?? LANGFUSE_HOME_DASHBOARD_ID;
-  const dashboardName = displayedDashboard?.name ?? "Mission Control";
+  const dashboardName = displayedDashboard?.name ?? "Langpluse";
   const dashboardOwner = displayedDashboard?.owner ?? "LANGFUSE";
   // Show a loading state until the home resolution (or peek fetch) settles —
   // rendering the curated fallback early would flash the wrong layout and
@@ -266,7 +266,7 @@ export default function Dashboard() {
         withPadding
         scrollable
         headerProps={{
-          title: "Mission Control",
+          title: "Langpluse",
           actionButtonsLeft: (
             <>
               <MultiSelect

@@ -1,4 +1,4 @@
-# Mission Control Implementation Plan
+# Langpluse Implementation Plan
 
 Status: Active Development — Simulation complete
 Source of truth: `PROJECT_PRD.md` version 1.0  
@@ -6,7 +6,7 @@ Baseline: Langfuse-derived monorepo on `main`
 
 ## 1. Executive architecture comparison
 
-Mission Control should be implemented as an additive agent-operating layer over
+Langpluse should be implemented as an additive agent-operating layer over
 the existing observability platform. The current system already solves the
 expensive horizontal problems:
 
@@ -55,7 +55,7 @@ The implementation therefore follows these rules:
 | Next.js 16, React 19, TypeScript, Tailwind, shadcn/ui | Present | Keep |
 | Zustand | Present; used by the playback engine | Extend with bounded per-run stores |
 | Streaming | SSE dashboard query route and AI streaming exist | Add an authenticated resumable run-event stream |
-| React Flow | Missing | Add `@xyflow/react` in Milestone 4 after approval |
+| React Flow | Present through `@xyflow/react` | Reuse for Agent Brain, Workflow Graph, and Multi-Agent Graph |
 | Framer Motion | Missing | Add `framer-motion` in Milestone 12 after approval |
 | Server Actions | Small App Router surface; product is Pages Router/tRPC-centric | Do not replace tRPC. Use Server Actions only if a future App Router surface has a concrete need and the architecture documentation is updated |
 | Dashboard/analytics | Mature generic system | Add Mission Control metrics and curated presets |
@@ -129,11 +129,11 @@ evaluation, playground, settings, organization, and billing routes remain.
 
 The following PRD dependencies are not installed:
 
-- `@xyflow/react` for Workflow Graph and Multi-Agent Graph.
 - `framer-motion` for final interaction polish.
 
-They must be added project-locally to `web/package.json` and `pnpm-lock.yaml`
-only after explicit approval. No other new dependency is currently justified.
+`framer-motion` must be added project-locally to `web/package.json` and
+`pnpm-lock.yaml` only after explicit approval. No other new dependency is
+currently justified.
 
 ### Standard milestone validation
 

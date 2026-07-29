@@ -86,7 +86,7 @@ function MemoryEmptyState({
         <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
           {isFiltered
             ? "Broaden the search, source, freshness, or retrieval status to inspect more evidence."
-            : "This run did not emit a memory retrieval event. Mission Control does not invent memory records from unrelated spans."}
+            : "This run did not emit a memory retrieval event. Langpluse does not invent memory records from unrelated spans."}
         </p>
         {isFiltered ? (
           <Button

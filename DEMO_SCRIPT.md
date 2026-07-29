@@ -1,6 +1,6 @@
-# Mission Control — 5-Minute Founder Demo
+# Langpluse — 5-Minute Founder Demo
 
-Mission Control is the operating console for a production AI agent. This demo
+Langpluse is the operating console for a production AI agent. This demo
 follows one coherent workflow: an enterprise renewal email for **Northstar
 Logistics**. The agent verifies account and contract facts, retrieves approved
 memory, selects a safe strategy, obtains human approval, and sends the email.
@@ -26,8 +26,8 @@ set the dashboard time range to the last 24 hours and use a desktop viewport.
 
 ### 0:00–0:35 — Open the operating picture
 
-1. Open **Overview** in the sidebar.
-2. Point out the Mission Control title and the clearly labeled seeded workflow
+1. Open **Dashboard** in the sidebar.
+2. Point out the Langpluse title and the clearly labeled seeded workflow
    data.
 3. Read the dashboard as one story: active agents, live executions, quality,
    memory accuracy, tool success, cost, health, and the live activity feed all
@@ -38,7 +38,7 @@ set the dashboard time range to the last 24 hours and use a desktop viewport.
 
 ### 0:35–1:25 — Show the live execution timeline
 
-1. Click **Agent Runs** in the sidebar.
+1. Click **Runs** in the sidebar.
 2. Open the `enterprise-sales-email-agent` run using the deep link printed by
    `pnpm run seed -- sales-email-agent --v4`.
 3. Stay on **Live timeline**. Press **Play** in the replay bar, then **Pause**
@@ -65,7 +65,7 @@ set the dashboard time range to the last 24 hours and use a desktop viewport.
 1. Click **Memory**.
 2. Keep **Inventory** selected and choose the rejected-memory filter.
 3. Select the expired commercial exception, then switch to **Relationships**.
-4. Say: “Mission Control exposes both what the agent used and what it rejected.
+4. Say: “Langpluse exposes both what the agent used and what it rejected.
    Here the agent deliberately ignores an expired discount, so a plausible
    memory cannot turn into an unauthorized commercial promise.”
 
@@ -100,7 +100,7 @@ set the dashboard time range to the last 24 hours and use a desktop viewport.
 
 ### 4:45–5:00 — Close with the product thesis
 
-Say: “Mission Control gives engineering teams one place to operate production
+Say: “Langpluse gives engineering teams one place to operate production
 AI agents: see execution health, reconstruct what happened, understand why it
 happened, and safely test what would happen next.”
 
