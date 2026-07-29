@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Milestone 4 approved
+Status: Active Development — Memory Explorer approved
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -614,6 +614,12 @@ parallelism, handoffs, and multi-agent messages. Stress fixtures cover deep,
 wide, cyclic, partial, and multi-thousand-node executions.
 
 ## Milestone 5 — Memory Explorer
+
+**Status: IN PROGRESS**
+
+**Numbering note:** The approved implementation request names this Memory
+Explorer delivery “Milestone 6.” This plan retains its original milestone
+numbering so Tool Explorer and later milestones are not renumbered or altered.
 
 **PRD feature:** Memory Explorer.
 
