@@ -59,6 +59,30 @@ type SalesEmailStep = {
   toolSelectionReason?: string;
   rejectedAlternatives?: string[];
   memoryUsed?: string[];
+  memoryItems?: Array<{
+    id: string;
+    content: string;
+    disposition: "retrieved" | "rejected";
+    similarity: number;
+    confidence: number;
+    embeddingDistance: number;
+    source: string;
+    createdAtOffsetMs: number;
+    retrievedAtOffsetMs: number;
+    retrievalTimeMs: number;
+    reasonUsed?: string;
+    reasonIgnored?: string;
+    businessContext: string;
+    relationships?: Array<{
+      memoryId: string;
+      type:
+        | "SUPPORTS"
+        | "CONTRADICTS"
+        | "SUPERSEDES"
+        | "SAME_ENTITY"
+        | "SAME_SOURCE";
+    }>;
+  }>;
   dependencyKeys?: string[];
   inputTokens?: number;
   outputTokens?: number;
@@ -168,11 +192,133 @@ const STEPS: SalesEmailStep[] = [
     confidence: 0.92,
     reasoningSummary:
       "Retrieve recent account priorities that are safe to use in renewal outreach.",
+    memoryItems: [
+      {
+        id: "northstar-eu-residency",
+        content:
+          "Avery Morgan requested EU data residency coverage in the renewal architecture review.",
+        disposition: "retrieved",
+        similarity: 0.96,
+        confidence: 0.98,
+        embeddingDistance: 0.04,
+        source: "Salesforce / customer success notes",
+        createdAtOffsetMs: -3 * 24 * 60 * 60 * 1_000,
+        retrievedAtOffsetMs: 980,
+        retrievalTimeMs: 84,
+        reasonUsed:
+          "Directly supports a verified renewal value proposition for Northstar.",
+        businessContext:
+          "Northstar Logistics enterprise renewal due 2026-09-30",
+        relationships: [
+          {
+            memoryId: "northstar-team-growth",
+            type: "SAME_ENTITY",
+          },
+          {
+            memoryId: "northstar-legacy-discount",
+            type: "CONTRADICTS",
+          },
+        ],
+      },
+      {
+        id: "northstar-team-growth",
+        content:
+          "Northstar expanded its automation engineering team by 30% during the current contract term.",
+        disposition: "retrieved",
+        similarity: 0.92,
+        confidence: 0.95,
+        embeddingDistance: 0.08,
+        source: "Product telemetry / account intelligence",
+        createdAtOffsetMs: -11 * 60 * 60 * 1_000,
+        retrievedAtOffsetMs: 1_210,
+        retrievalTimeMs: 121,
+        reasonUsed:
+          "Explains increased platform usage and strengthens the expansion narrative.",
+        businessContext:
+          "Northstar Logistics enterprise renewal due 2026-09-30",
+        relationships: [
+          {
+            memoryId: "northstar-eu-residency",
+            type: "SAME_ENTITY",
+          },
+          {
+            memoryId: "enterprise-renewal-playbook",
+            type: "SUPPORTS",
+          },
+        ],
+      },
+      {
+        id: "enterprise-renewal-playbook",
+        content:
+          "For healthy enterprise accounts, lead with verified operational value and request a short executive review.",
+        disposition: "retrieved",
+        similarity: 0.88,
+        confidence: 0.93,
+        embeddingDistance: 0.12,
+        source: "Revenue operations knowledge base",
+        createdAtOffsetMs: -45 * 24 * 60 * 60 * 1_000,
+        retrievedAtOffsetMs: 1_360,
+        retrievalTimeMs: 63,
+        reasonUsed:
+          "Provides the approved outreach pattern after account-specific facts are verified.",
+        businessContext: "Enterprise renewal communications policy, revision 6",
+        relationships: [
+          {
+            memoryId: "northstar-team-growth",
+            type: "SUPPORTS",
+          },
+        ],
+      },
+      {
+        id: "northstar-legacy-discount",
+        content:
+          "A 12% commercial exception was approved for Northstar during the 2024 expansion.",
+        disposition: "rejected",
+        similarity: 0.86,
+        confidence: 0.99,
+        embeddingDistance: 0.14,
+        source: "Commercial approvals archive",
+        createdAtOffsetMs: -421 * 24 * 60 * 60 * 1_000,
+        retrievedAtOffsetMs: 1_100,
+        retrievalTimeMs: 93,
+        reasonIgnored:
+          "The exception expired with the 2024 order form and cannot be represented as a current offer.",
+        businessContext:
+          "Historical Northstar commercial approval; no current authority",
+        relationships: [
+          {
+            memoryId: "northstar-eu-residency",
+            type: "CONTRADICTS",
+          },
+        ],
+      },
+      {
+        id: "northstar-support-incident",
+        content:
+          "A transient webhook delivery delay affected a Northstar sandbox workspace fourteen months ago.",
+        disposition: "rejected",
+        similarity: 0.43,
+        confidence: 0.97,
+        embeddingDistance: 0.57,
+        source: "Support incident archive",
+        createdAtOffsetMs: -430 * 24 * 60 * 60 * 1_000,
+        retrievedAtOffsetMs: 1_480,
+        retrievalTimeMs: 71,
+        reasonIgnored:
+          "The resolved sandbox incident is stale and unrelated to the production renewal objective.",
+        businessContext: "Resolved support incident; sandbox environment only",
+      },
+    ],
     input: { query: "Northstar Logistics renewal priorities" },
     output: {
       memories: [
         "Interested in EU data residency",
         "Expanded automation team by 30%",
+        "Healthy enterprise renewal playbook",
+      ],
+      rejectedMemories: [
+        "Expired 2024 discount exception",
+        "Resolved sandbox webhook incident",
       ],
     },
   },
@@ -617,6 +763,26 @@ const run = async (
         ...(step.memoryUsed
           ? {
               "mission_control.memory.used": JSON.stringify(step.memoryUsed),
+            }
+          : {}),
+        ...(step.memoryItems
+          ? {
+              "mission_control.memory.items": JSON.stringify(
+                step.memoryItems.map(
+                  ({ createdAtOffsetMs, retrievedAtOffsetMs, ...memory }) => ({
+                    ...memory,
+                    createdAt: new Date(
+                      traceTimestamp + createdAtOffsetMs,
+                    ).toISOString(),
+                    retrievedAt: new Date(
+                      traceTimestamp + retrievedAtOffsetMs,
+                    ).toISOString(),
+                  }),
+                ),
+              ),
+              "mission_control.memory.source": "Enterprise retrieval pipeline",
+              "mission_control.memory.business_context":
+                "Northstar Logistics renewal due 2026-09-30",
             }
           : {}),
         ...(step.dependencyKeys
