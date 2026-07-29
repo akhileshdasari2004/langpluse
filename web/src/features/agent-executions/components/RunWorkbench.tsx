@@ -1,7 +1,7 @@
 import type { AgentExecutionProjection } from "@langfuse/shared";
 import { TraceDetailBody } from "@/src/components/trace/TraceDetailBody";
 import type { ComponentProps } from "react";
-import { Activity, BrainCircuit, Workflow } from "lucide-react";
+import { Activity, BrainCircuit, Database, Workflow } from "lucide-react";
 import { StringParam, useQueryParam } from "use-query-params";
 import {
   TabsBar,
@@ -18,8 +18,9 @@ import { LiveExecutionConsole } from "./LiveExecutionConsole";
 import { LiveRunStoreProvider } from "../live/LiveRunStoreProvider";
 import { useRunEventStream } from "../live/useRunEventStream";
 import { AgentBrainView } from "../brain/AgentBrainView";
+import { MemoryExplorer } from "../memory/MemoryExplorer";
 
-type Trace = ComponentProps<typeof TraceDetailBody>["trace"];
+type Trace = NonNullable<ComponentProps<typeof TraceDetailBody>["trace"]>;
 
 export function RunWorkbench({
   projection,
@@ -49,7 +50,9 @@ function RunWorkbenchContent({
   const [runViewParam, setRunViewParam] = useQueryParam("runView", StringParam);
   const projection = useRunProjection();
   const activeView =
-    runViewParam === "trace" || runViewParam === "brain"
+    runViewParam === "trace" ||
+    runViewParam === "brain" ||
+    runViewParam === "memory"
       ? runViewParam
       : "live";
   const isSeededDemo = projection.events.some(
@@ -82,6 +85,10 @@ function RunWorkbenchContent({
             <BrainCircuit className="size-3.5" />
             Agent Brain
           </TabsBarTrigger>
+          <TabsBarTrigger value="memory" className="gap-1.5">
+            <Database className="size-3.5" />
+            Memory
+          </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
             Trace inspector
@@ -98,6 +105,16 @@ function RunWorkbenchContent({
           className="mt-0 flex min-h-0 flex-1 overflow-hidden"
         >
           <AgentBrainView />
+        </TabsBarContent>
+        <TabsBarContent
+          value="memory"
+          className="mt-0 flex min-h-0 flex-1 overflow-hidden"
+        >
+          <MemoryExplorer
+            projectId={trace.projectId}
+            traceId={trace.id}
+            observations={trace.observations}
+          />
         </TabsBarContent>
         <TabsBarContent
           value="trace"

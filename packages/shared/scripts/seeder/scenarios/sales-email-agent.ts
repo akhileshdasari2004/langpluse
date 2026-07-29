@@ -238,10 +238,6 @@ const STEPS: SalesEmailStep[] = [
           "Northstar Logistics enterprise renewal due 2026-09-30",
         relationships: [
           {
-            memoryId: "northstar-eu-residency",
-            type: "SAME_ENTITY",
-          },
-          {
             memoryId: "enterprise-renewal-playbook",
             type: "SUPPORTS",
           },
@@ -262,12 +258,6 @@ const STEPS: SalesEmailStep[] = [
         reasonUsed:
           "Provides the approved outreach pattern after account-specific facts are verified.",
         businessContext: "Enterprise renewal communications policy, revision 6",
-        relationships: [
-          {
-            memoryId: "northstar-team-growth",
-            type: "SUPPORTS",
-          },
-        ],
       },
       {
         id: "northstar-legacy-discount",
@@ -285,12 +275,6 @@ const STEPS: SalesEmailStep[] = [
           "The exception expired with the 2024 order form and cannot be represented as a current offer.",
         businessContext:
           "Historical Northstar commercial approval; no current authority",
-        relationships: [
-          {
-            memoryId: "northstar-eu-residency",
-            type: "CONTRADICTS",
-          },
-        ],
       },
       {
         id: "northstar-support-incident",

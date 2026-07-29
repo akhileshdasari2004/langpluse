@@ -59,6 +59,7 @@ export const AgentMemoryEvidenceSchema = z.object({
   memoryId: z.string().min(1),
   eventId: z.string().min(1),
   eventName: z.string().min(1),
+  eventStartedAt: z.date(),
   disposition: AgentMemoryDisposition,
   content: z.string().nullable(),
   similarity: z.number().min(0).max(1).nullable(),
@@ -153,6 +154,7 @@ export function buildAgentMemoryProjection(
   );
   const pendingRelationships: Array<{
     sourceId: string;
+    eventId: string;
     targetMemoryId: string;
     type: AgentMemoryRelationshipType;
   }> = [];
@@ -176,6 +178,7 @@ export function buildAgentMemoryProjection(
           memoryId: event.id,
           eventId: event.id,
           eventName: event.name,
+          eventStartedAt: event.startedAt,
           disposition: "RETRIEVED",
           content: null,
           similarity: null,
@@ -210,6 +213,7 @@ export function buildAgentMemoryProjection(
       for (const relationship of relationships) {
         pendingRelationships.push({
           sourceId: id,
+          eventId: event.id,
           targetMemoryId: relationship.memoryId,
           type: relationship.type,
         });
@@ -220,6 +224,7 @@ export function buildAgentMemoryProjection(
         memoryId: item.id,
         eventId: event.id,
         eventName: event.name,
+        eventStartedAt: event.startedAt,
         disposition: dispositionOf(item.disposition),
         content: item.content ?? null,
         similarity: item.similarity ?? null,
@@ -245,9 +250,13 @@ export function buildAgentMemoryProjection(
   const idByMemoryId = new Map(
     memories.map((memory) => [memory.memoryId, memory.id]),
   );
-  const relationships = pendingRelationships.flatMap(
+  const memoryIds = new Set(memories.map((memory) => memory.id));
+  const projectedRelationships = pendingRelationships.flatMap(
     (relationship): AgentMemoryRelationship[] => {
-      const target = idByMemoryId.get(relationship.targetMemoryId);
+      const scopedTarget = `${relationship.eventId}:${relationship.targetMemoryId}`;
+      const target = memoryIds.has(scopedTarget)
+        ? scopedTarget
+        : idByMemoryId.get(relationship.targetMemoryId);
       if (!target || target === relationship.sourceId) return [];
       return [
         {
@@ -260,6 +269,14 @@ export function buildAgentMemoryProjection(
       ];
     },
   );
+  const relationships = [
+    ...new Map(
+      projectedRelationships.map((relationship) => [
+        relationship.id,
+        relationship,
+      ]),
+    ).values(),
+  ];
   const relationshipIdsByMemory = new Map<string, string[]>();
   for (const relationship of relationships) {
     const sourceRelationships =
