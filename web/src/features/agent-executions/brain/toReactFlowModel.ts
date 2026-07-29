@@ -52,6 +52,7 @@ export async function toBrainReactFlowModel(
             brainNode,
             searchMatch: false,
             searchDimmed: false,
+            replayActive: false,
           },
           style: { width: BRAIN_NODE_WIDTH, height: BRAIN_NODE_HEIGHT },
           draggable: false,

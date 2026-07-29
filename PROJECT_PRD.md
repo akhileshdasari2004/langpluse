@@ -371,7 +371,7 @@ Reviewer Agent
 
 ## Execution Replay
 
-Status: IN PROGRESS
+Status: DONE
 
 Replay every execution.
 
@@ -581,7 +581,7 @@ Every feature should solve a real engineering problem.
 
 [ ] Multi-Agent Graph
 
-[ ] Replay Engine
+[x] Replay Engine
 
 [ ] Root Cause Analysis
 

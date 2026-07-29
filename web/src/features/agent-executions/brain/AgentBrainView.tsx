@@ -26,6 +26,7 @@ import { Skeleton } from "@/src/components/ui/skeleton";
 import { cn } from "@/src/utils/tailwind";
 import { useRunProjection } from "../components/RunProjectionContext";
 import { useLiveRunStore } from "../live/LiveRunStoreProvider";
+import { useActiveRunReplayEvent } from "../replay/RunReplayProvider";
 import { AgentBrainInspector } from "./AgentBrainInspector";
 import { AgentBrainNode as AgentBrainNodeComponent } from "./AgentBrainNode";
 import { AgentCommunicationNode as AgentCommunicationNodeComponent } from "./AgentCommunicationNode";
@@ -100,6 +101,7 @@ function AgentBrainSkeleton() {
 export function AgentBrainView() {
   const projection = useRunProjection();
   const buffer = useLiveRunStore((state) => state.buffer);
+  const replayEvent = useActiveRunReplayEvent();
   const { resolvedTheme } = useTheme();
   const [modeParam, setModeParam] = useQueryParam("brainMode", StringParam);
   const [selectedNodeParam, setSelectedNodeParam] = useQueryParam(
@@ -227,10 +229,17 @@ export function AgentBrainView() {
             ...node.data,
             searchMatch: matchSet.has(node.id),
             searchDimmed: normalizedSearch.length > 0 && !matchSet.has(node.id),
+            replayActive: node.id === replayEvent?.id,
           },
         };
       }),
-    [matchSet, model?.nodes, normalizedSearch.length, selectedId],
+    [
+      matchSet,
+      model?.nodes,
+      normalizedSearch.length,
+      replayEvent?.id,
+      selectedId,
+    ],
   );
 
   const selectNode = useCallback(

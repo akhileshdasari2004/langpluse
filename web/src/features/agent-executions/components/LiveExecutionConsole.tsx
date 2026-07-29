@@ -32,6 +32,7 @@ import {
   getAvailableTimelineCategories,
 } from "../live/semanticTimelineRows";
 import type { LiveRunConnectionState } from "../live/liveRunStore";
+import { useActiveRunReplayEvent } from "../replay/RunReplayProvider";
 
 const statusOptions: Array<AgentExecutionEvent["status"]> = [
   "RUNNING",
@@ -121,6 +122,7 @@ export function LiveExecutionConsole() {
   const unreadCount = useLiveRunStore((state) => state.unreadCount);
   const streamError = useLiveRunStore((state) => state.streamError);
   const actions = useLiveRunStore((state) => state.actions);
+  const replayEvent = useActiveRunReplayEvent();
   const isSeededDemo = projection.events.some(
     (event) => event.metadata.scenario === "sales-email-agent",
   );
@@ -269,6 +271,21 @@ export function LiveExecutionConsole() {
             detail={`${apiEvents.length} external operations`}
             icon={Radio}
           />
+        </div>
+
+        <div className="bg-card flex min-w-0 items-center gap-2 rounded-lg border px-3 py-2 text-xs shadow-xs">
+          <Radio className="text-primary-accent size-3.5 shrink-0" />
+          <span className="text-muted-foreground shrink-0 font-bold">
+            Current replay state
+          </span>
+          <span
+            className="min-w-0 truncate"
+            title={replayEvent?.name}
+          >
+            {replayEvent
+              ? `${replayEvent.category.replaceAll("_", " ")} · ${replayEvent.name}`
+              : "Execution start — choose Play or Next to inspect the first event."}
+          </span>
         </div>
 
         <div className="grid gap-2 sm:grid-cols-[minmax(14rem,1fr)_11rem_11rem]">

@@ -31,6 +31,7 @@ export const EMPTY_ACTIVE_IDS: ReadonlySet<string> = new Set();
 // than this play in real time; anything longer scales so the whole trace always
 // plays in exactly this window (no manual speed control).
 export const PLAYBACK_MAX_SECONDS = 10;
+export const PLAYBACK_SPEEDS = [0.5, 1, 2, 4] as const;
 // RAF suspends in hidden tabs; cap the resumed delta so playback sweeps
 // instead of teleporting to the end after a background-tab or GC stall.
 const MAX_FRAME_SECONDS = 0.25;
@@ -51,6 +52,8 @@ export interface PlayheadState {
   playheadSec: number;
   isPlaying: boolean;
   showPlayhead: boolean;
+  playbackSpeed: number;
+  boundaries: number[];
   /** Observations "playing" at the playhead — drives the timeline/graph glow. */
   activeIds: ReadonlySet<string>;
   actions: {
@@ -60,6 +63,9 @@ export interface PlayheadState {
     stop: () => void;
     /** Move the playhead to an absolute time (seconds from origin) and pause. */
     seekToSec: (sec: number) => void;
+    setPlaybackSpeed: (speed: number) => void;
+    stepForward: () => void;
+    stepBack: () => void;
     /**
      * Integration seam: sync trace-derived inputs into the store.
      * `hard` (a different trace loaded) also resets playback; a soft sync
@@ -69,6 +75,7 @@ export interface PlayheadState {
     syncTrace: (input: {
       traceDuration: number;
       nodeWindows: NodeWindow[];
+      boundaries?: number[];
       hard: boolean;
     }) => void;
   };
@@ -156,6 +163,16 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+function normalizeBoundaries(boundaries: number[], traceDuration: number) {
+  return [
+    ...new Set([
+      0,
+      traceDuration,
+      ...boundaries.map((value) => clamp(value, 0, traceDuration)),
+    ]),
+  ].toSorted((left, right) => left - right);
+}
+
 export function createPlayheadStore(): PlayheadStore {
   // RAF handle + frame clock are per-instance (a trace peek and the full trace
   // page can mount two providers) — they live in this closure, not module scope.
@@ -194,6 +211,8 @@ export function createPlayheadStore(): PlayheadStore {
       playheadSec: 0,
       isPlaying: false,
       showPlayhead: false,
+      playbackSpeed: 1,
+      boundaries: [],
       activeIds: EMPTY_ACTIVE_IDS,
       actions: {
         play: () => {
@@ -211,8 +230,9 @@ export function createPlayheadStore(): PlayheadStore {
             lastTs = ts;
             // Live reads each tick — duration/rate stay correct across
             // same-trace data changes mid-playback.
-            const { traceDuration, playheadSec } = get();
-            const nextSec = playheadSec + dt * playbackRate(traceDuration);
+            const { traceDuration, playheadSec, playbackSpeed } = get();
+            const nextSec =
+              playheadSec + dt * playbackRate(traceDuration) * playbackSpeed;
             if (nextSec >= traceDuration) {
               positionPlayhead(traceDuration, playheadSec);
               pause();
@@ -238,8 +258,39 @@ export function createPlayheadStore(): PlayheadStore {
           set({ isPlaying: false, showPlayhead: true });
           positionPlayhead(sec);
         },
-        syncTrace: ({ traceDuration, nodeWindows, hard }) => {
+        setPlaybackSpeed: (playbackSpeed) => {
+          if (
+            !PLAYBACK_SPEEDS.includes(
+              playbackSpeed as (typeof PLAYBACK_SPEEDS)[number],
+            )
+          )
+            return;
+          set({ playbackSpeed });
+        },
+        stepForward: () => {
+          const { boundaries, playheadSec, traceDuration } = get();
+          const next =
+            boundaries.find(
+              (boundary) => boundary > playheadSec + END_EPSILON_SECONDS,
+            ) ?? traceDuration;
+          get().actions.seekToSec(next);
+        },
+        stepBack: () => {
+          const { boundaries, playheadSec } = get();
+          const previous =
+            [...boundaries]
+              .reverse()
+              .find(
+                (boundary) => boundary < playheadSec - END_EPSILON_SECONDS,
+              ) ?? 0;
+          get().actions.seekToSec(previous);
+        },
+        syncTrace: ({ traceDuration, nodeWindows, boundaries = [], hard }) => {
           const padded = padActivationWindows(nodeWindows, traceDuration);
+          const normalizedBoundaries = normalizeBoundaries(
+            boundaries,
+            traceDuration,
+          );
           if (hard) {
             // A different trace loaded — reset playback entirely.
             cancelRaf();
@@ -250,13 +301,18 @@ export function createPlayheadStore(): PlayheadStore {
               isPlaying: false,
               showPlayhead: false,
               activeIds: EMPTY_ACTIVE_IDS,
+              boundaries: normalizedBoundaries,
             });
             return;
           }
           // Same trace, new geometry (level filter, refetch): re-clamp the
           // playhead and recompute the glow; playback (live-reading get())
           // continues seamlessly at the new rate.
-          set({ traceDuration, nodeWindows: padded });
+          set({
+            traceDuration,
+            nodeWindows: padded,
+            boundaries: normalizedBoundaries,
+          });
           if (get().showPlayhead) positionPlayhead(get().playheadSec);
         },
       },

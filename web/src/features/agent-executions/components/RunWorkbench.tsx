@@ -26,6 +26,8 @@ import { useRunEventStream } from "../live/useRunEventStream";
 import { AgentBrainView } from "../brain/AgentBrainView";
 import { MemoryExplorer } from "../memory/MemoryExplorer";
 import { DecisionExplorer } from "../decisions/DecisionExplorer";
+import { RunReplayProvider } from "../replay/RunReplayProvider";
+import { ReplayToolbar } from "../replay/ReplayToolbar";
 
 type Trace = NonNullable<ComponentProps<typeof TraceDetailBody>["trace"]>;
 
@@ -41,7 +43,9 @@ export function RunWorkbench({
   return (
     <RunProjectionProvider projection={projection}>
       <LiveRunStoreProvider projection={projection}>
-        <RunWorkbenchContent trace={trace} context={context} />
+        <RunReplayProvider>
+          <RunWorkbenchContent trace={trace} context={context} />
+        </RunReplayProvider>
       </LiveRunStoreProvider>
     </RunProjectionProvider>
   );
@@ -77,6 +81,7 @@ function RunWorkbenchContent({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <RunWorkbenchHeader />
+      <ReplayToolbar />
       <TabsBar
         value={activeView}
         onValueChange={(value) => {

@@ -29,6 +29,7 @@ import {
 import { cn } from "@/src/utils/tailwind";
 import { useRunProjection } from "../components/RunProjectionContext";
 import { useLiveRunStore } from "../live/LiveRunStoreProvider";
+import { useActiveRunReplayEvent } from "../replay/RunReplayProvider";
 import { DecisionInspector } from "./DecisionInspector";
 import { DecisionTree } from "./DecisionTree";
 import {
@@ -206,6 +207,7 @@ function DecisionEmptyState({
 export function DecisionExplorer() {
   const projection = useRunProjection();
   const buffer = useLiveRunStore((state) => state.buffer);
+  const replayEvent = useActiveRunReplayEvent();
   const [decisionParam, setDecisionParam] = useQueryParam(
     "decision",
     StringParam,
@@ -253,6 +255,9 @@ export function DecisionExplorer() {
   );
   const selectedDecision =
     filteredDecisions.find((decision) => decision.id === decisionParam) ??
+    filteredDecisions.find(
+      (decision) => decision.eventId === replayEvent?.id,
+    ) ??
     filteredDecisions[0] ??
     null;
   const selectedAlternative =

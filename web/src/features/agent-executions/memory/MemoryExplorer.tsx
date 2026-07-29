@@ -30,6 +30,7 @@ import type { ObservationReturnTypeWithMetadata } from "@/src/server/api/routers
 import { cn } from "@/src/utils/tailwind";
 import { useRunProjection } from "../components/RunProjectionContext";
 import { useLiveRunStore } from "../live/LiveRunStoreProvider";
+import { useActiveRunReplayEvent } from "../replay/RunReplayProvider";
 import { MemoryDetail } from "./MemoryDetail";
 import { MemoryRelationships } from "./MemoryRelationships";
 import { MemorySummaryCards } from "./MemorySummaryCards";
@@ -115,6 +116,7 @@ export function MemoryExplorer({
 }) {
   const projection = useRunProjection();
   const buffer = useLiveRunStore((state) => state.buffer);
+  const replayEvent = useActiveRunReplayEvent();
   const [selectedParam, setSelectedParam] = useQueryParam(
     "memory",
     StringParam,
@@ -179,6 +181,9 @@ export function MemoryExplorer({
   );
   const selectedMemory =
     memoryProjection.memories.find((memory) => memory.id === selectedParam) ??
+    memoryProjection.memories.find(
+      (memory) => memory.eventId === replayEvent?.id,
+    ) ??
     null;
   const observationById = useMemo(
     () =>

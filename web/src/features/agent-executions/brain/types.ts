@@ -5,6 +5,7 @@ export type BrainFlowNodeData = {
   brainNode: AgentBrainNode;
   searchMatch: boolean;
   searchDimmed: boolean;
+  replayActive: boolean;
 };
 
 export type BrainFlowNode = Node<BrainFlowNodeData, "brain">;

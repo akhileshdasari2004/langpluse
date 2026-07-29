@@ -122,7 +122,7 @@ const statusVariant: Record<
 };
 
 function AgentBrainNodeComponent({ data, selected }: NodeProps<BrainFlowNode>) {
-  const { brainNode, searchMatch, searchDimmed } = data;
+  const { brainNode, searchMatch, searchDimmed, replayActive } = data;
   const presentation = nodePresentation[brainNode.kind];
   const Icon = presentation.icon;
   const duration =
@@ -145,6 +145,7 @@ function AgentBrainNodeComponent({ data, selected }: NodeProps<BrainFlowNode>) {
             "ring-primary-accent shadow-primary-accent/20 scale-[1.02] ring-2 ring-offset-2",
           searchMatch && "ring-2 ring-amber-400 ring-offset-2",
           searchDimmed && "opacity-25",
+          replayActive && "ring-2 ring-emerald-400 ring-offset-2",
           brainNode.event.status === "RUNNING" &&
             "shadow-[0_0_24px_hsl(var(--primary-accent)/0.24)]",
         )}
