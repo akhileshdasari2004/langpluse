@@ -112,6 +112,37 @@ describe("projectAgentExecution", () => {
     expect(projection.status).toBe("FAILED");
   });
 
+  it("allows a later completion to recover from a failed attempt", () => {
+    const projection = projectAgentExecution({
+      trace: {
+        id: "trace-1",
+        projectId: "project-1",
+        name: "recovered-run",
+        timestamp: new Date("2026-01-01T00:00:00.000Z"),
+        metadata: {},
+        version: null,
+      },
+      events: [
+        sourceEvent({
+          id: "failed-attempt",
+          level: "ERROR",
+          startTime: new Date("2026-01-01T00:00:01.000Z"),
+          endTime: new Date("2026-01-01T00:00:02.000Z"),
+        }),
+        sourceEvent({
+          id: "completion",
+          name: "execution complete",
+          metadata: { "mission_control.event.category": "completion" },
+          startTime: new Date("2026-01-01T00:00:03.000Z"),
+          endTime: new Date("2026-01-01T00:00:04.000Z"),
+        }),
+      ],
+    });
+
+    expect(projection.status).toBe("SUCCEEDED");
+    expect(projection.events[0]?.status).toBe("FAILED");
+  });
+
   it("preserves raw telemetry identity and metadata in the semantic projection", () => {
     const rawEvent = sourceEvent({
       id: "raw-observation-id",
@@ -145,6 +176,38 @@ describe("projectAgentExecution", () => {
       category: "TOOL_CALL",
       categoryProvenance: "EXPLICIT",
       confidence: 1,
+      status: "COMPLETED",
+      toolUsed: "crm.lookup",
+      apiLatencyMs: 1_000,
+    });
+  });
+
+  it("projects only explicitly supplied reasoning summaries and confidence", () => {
+    const projection = projectAgentExecution({
+      trace: {
+        id: "trace-1",
+        projectId: "project-1",
+        name: "reasoning-run",
+        timestamp: new Date("2026-01-01T00:00:00.000Z"),
+        metadata: {},
+        version: null,
+      },
+      events: [
+        sourceEvent({
+          metadata: {
+            "mission_control.event.category": "reasoning",
+            "mission_control.event.confidence": 0.87,
+            "mission_control.reasoning.summary":
+              "Use verified renewal context before drafting.",
+          },
+        }),
+      ],
+    });
+
+    expect(projection.events[0]).toMatchObject({
+      confidence: 0.87,
+      reasoningSummary: "Use verified renewal context before drafting.",
+      toolUsed: null,
     });
   });
 });

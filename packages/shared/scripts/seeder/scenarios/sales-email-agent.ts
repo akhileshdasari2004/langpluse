@@ -30,10 +30,19 @@ type SalesEmailStep = {
     | "reasoning"
     | "decision"
     | "tool_call"
+    | "retry"
+    | "failure"
     | "approval"
     | "completion";
   start: number;
   end: number;
+  level?: "DEFAULT" | "ERROR" | "WARNING";
+  statusMessage?: string;
+  confidence?: number;
+  toolUsed?: string;
+  reasoningSummary?: string;
+  apiLatencyMs?: number;
+  eventStatus?: "completed" | "failed";
   input?: unknown;
   output?: unknown;
 };
@@ -46,7 +55,10 @@ const STEPS: SalesEmailStep[] = [
     name: "enterprise-sales-email-agent",
     category: "task_received",
     start: 0,
-    end: 8_400,
+    end: 11_100,
+    confidence: 0.99,
+    reasoningSummary:
+      "Coordinate verified account context, approval, and delivery for renewal outreach.",
     input: {
       task: "Draft and send a renewal outreach email",
       account: "Northstar Logistics",
@@ -62,6 +74,9 @@ const STEPS: SalesEmailStep[] = [
     category: "planning",
     start: 120,
     end: 720,
+    confidence: 0.94,
+    reasoningSummary:
+      "Load account context, verify renewal constraints, draft, approve, and send.",
     output: {
       steps: [
         "load account context",
@@ -80,6 +95,9 @@ const STEPS: SalesEmailStep[] = [
     category: "tool_call",
     start: 780,
     end: 1_420,
+    confidence: 0.97,
+    toolUsed: "Salesforce CRM",
+    apiLatencyMs: 612,
     input: { accountId: "acct_northstar_001" },
     output: {
       plan: "Enterprise",
@@ -96,6 +114,9 @@ const STEPS: SalesEmailStep[] = [
     category: "memory_retrieval",
     start: 800,
     end: 1_590,
+    confidence: 0.92,
+    reasoningSummary:
+      "Retrieve recent account priorities that are safe to use in renewal outreach.",
     input: { query: "Northstar Logistics renewal priorities" },
     output: {
       memories: [
@@ -105,13 +126,66 @@ const STEPS: SalesEmailStep[] = [
     },
   },
   {
+    key: "erp-failure",
+    parentKey: "root",
+    type: "TOOL",
+    name: "netsuite.verify-renewal",
+    category: "failure",
+    start: 1_640,
+    end: 2_030,
+    level: "ERROR",
+    statusMessage: "NetSuite returned 429; retry budget remains.",
+    confidence: 0.98,
+    toolUsed: "NetSuite ERP",
+    apiLatencyMs: 388,
+    eventStatus: "failed",
+    input: { accountId: "acct_northstar_001", verify: "renewal_terms" },
+    output: { status: 429, retryAfterMs: 350 },
+  },
+  {
+    key: "erp-retry",
+    parentKey: "root",
+    type: "EVENT",
+    name: "retry-netsuite-with-backoff",
+    category: "retry",
+    start: 2_050,
+    end: 2_410,
+    level: "WARNING",
+    statusMessage: "Retry 1 of 2 completed after bounded backoff.",
+    confidence: 0.96,
+    reasoningSummary:
+      "Retry the idempotent renewal verification after the provider backoff window.",
+    output: { attempt: 1, maxAttempts: 2, backoffMs: 350 },
+  },
+  {
+    key: "erp-success",
+    parentKey: "root",
+    type: "TOOL",
+    name: "netsuite.verify-renewal",
+    category: "tool_call",
+    start: 2_430,
+    end: 3_080,
+    confidence: 0.98,
+    toolUsed: "NetSuite ERP",
+    apiLatencyMs: 624,
+    input: { accountId: "acct_northstar_001", verify: "renewal_terms" },
+    output: {
+      renewalEligible: true,
+      outstandingBalance: 0,
+      contractCurrency: "USD",
+    },
+  },
+  {
     key: "reason",
     parentKey: "root",
     type: "GENERATION",
     name: "reason-about-renewal-angle",
     category: "reasoning",
-    start: 1_680,
-    end: 3_260,
+    start: 3_160,
+    end: 4_740,
+    confidence: 0.93,
+    reasoningSummary:
+      "Lead with verified EU data residency and team growth; avoid unsupported pricing claims.",
     input: {
       constraints: ["be concise", "cite verified account facts", "no discount"],
     },
@@ -126,8 +200,11 @@ const STEPS: SalesEmailStep[] = [
     type: "EVENT",
     name: "select-email-strategy",
     category: "decision",
-    start: 3_320,
-    end: 3_360,
+    start: 4_800,
+    end: 4_840,
+    confidence: 0.91,
+    reasoningSummary:
+      "Select the value-led renewal strategy because verified operational context is stronger than a generic check-in.",
     output: {
       selected: "value-led-renewal",
       alternatives: ["discount-led", "generic-check-in"],
@@ -140,8 +217,11 @@ const STEPS: SalesEmailStep[] = [
     type: "GENERATION",
     name: "draft-renewal-email",
     category: "reasoning",
-    start: 3_440,
-    end: 5_480,
+    start: 4_920,
+    end: 6_960,
+    confidence: 0.95,
+    reasoningSummary:
+      "Draft a concise executive-ready message using only verified account facts.",
     output: {
       subject: "Planning Northstar's next phase of automation",
       body: "Hi Avery — with Northstar's automation team growing and EU data residency now available, I'd value 20 minutes to align the renewal with your next phase.",
@@ -153,8 +233,11 @@ const STEPS: SalesEmailStep[] = [
     type: "EVENT",
     name: "sales-manager-approval",
     category: "approval",
-    start: 5_560,
-    end: 7_380,
+    start: 7_040,
+    end: 9_460,
+    confidence: 1,
+    reasoningSummary:
+      "Require a sales manager to approve the customer-facing message before delivery.",
     output: { approved: true, approver: "sales-manager@mission-control.local" },
   },
   {
@@ -163,8 +246,11 @@ const STEPS: SalesEmailStep[] = [
     type: "TOOL",
     name: "email.send",
     category: "tool_call",
-    start: 7_460,
-    end: 8_020,
+    start: 9_540,
+    end: 10_100,
+    confidence: 0.99,
+    toolUsed: "SendGrid Delivery",
+    apiLatencyMs: 531,
     input: { to: "avery@northstar.example" },
     output: { status: "sent", messageId: "msg_mc_renewal_001" },
   },
@@ -174,8 +260,11 @@ const STEPS: SalesEmailStep[] = [
     type: "EVENT",
     name: "renewal-outreach-complete",
     category: "completion",
-    start: 8_100,
-    end: 8_140,
+    start: 10_180,
+    end: 10_220,
+    confidence: 1,
+    reasoningSummary:
+      "All required context, approval, and delivery checks completed successfully.",
     output: { status: "succeeded" },
   },
 ];
@@ -225,7 +314,7 @@ const run = async (
     timestamp: traceTimestamp,
     user_id: "sales-ops@mission-control.local",
     session_id: sessionId,
-    release: "mission-control-m1",
+    release: "mission-control-m3",
     version: "sales-email-v1",
     tags: ["mission-control", "sales", "enterprise"],
     public: false,
@@ -262,14 +351,35 @@ const run = async (
       start_time: traceTimestamp + step.start,
       end_time: traceTimestamp + step.end,
       completion_start_time: null,
-      level: "DEFAULT",
-      status_message: null,
+      level: step.level ?? "DEFAULT",
+      status_message: step.statusMessage ?? null,
       version: step.type === "AGENT" ? "1.0.0" : null,
       input: step.input === undefined ? null : JSON.stringify(step.input),
       output: step.output === undefined ? null : JSON.stringify(step.output),
       metadata: {
         scenario: "sales-email-agent",
         "mission_control.event.category": step.category,
+        ...(step.confidence === undefined
+          ? {}
+          : {
+              "mission_control.event.confidence": String(step.confidence),
+            }),
+        ...(step.toolUsed
+          ? { "mission_control.tool.name": step.toolUsed }
+          : {}),
+        ...(step.reasoningSummary
+          ? {
+              "mission_control.reasoning.summary": step.reasoningSummary,
+            }
+          : {}),
+        ...(step.apiLatencyMs === undefined
+          ? {}
+          : {
+              "mission_control.api.latency_ms": String(step.apiLatencyMs),
+            }),
+        ...(step.eventStatus
+          ? { "mission_control.event.status": step.eventStatus }
+          : {}),
         ...(step.type === "AGENT"
           ? {
               "mission_control.agent.key": "enterprise-sales-email-agent",

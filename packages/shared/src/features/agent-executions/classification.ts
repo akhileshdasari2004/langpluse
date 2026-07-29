@@ -1,6 +1,7 @@
 import {
   AgentExecutionEventCategory,
   type AgentExecutionEvent,
+  type AgentExecutionEventStatus,
   type AgentExecutionProjection,
   type AgentExecutionProvenance,
   type AgentIdentity,
@@ -15,6 +16,11 @@ export const MISSION_CONTROL_METADATA_KEYS = {
   agentKey: "mission_control.agent.key",
   agentName: "mission_control.agent.name",
   agentVersion: "mission_control.agent.version",
+  eventStatus: "mission_control.event.status",
+  eventConfidence: "mission_control.event.confidence",
+  reasoningSummary: "mission_control.reasoning.summary",
+  toolName: "mission_control.tool.name",
+  apiLatencyMs: "mission_control.api.latency_ms",
 } as const;
 
 const EXPLICIT_CATEGORY_ALIASES: Record<string, AgentExecutionEventCategory> = {
@@ -47,6 +53,23 @@ function metadataString(
   for (const key of keys) {
     const value = metadata[key];
     if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function metadataNumber(
+  metadata: AgentExecutionSourceEvent["metadata"],
+  ...keys: string[]
+): number | null {
+  for (const key of keys) {
+    const value = metadata[key];
+    const number =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim()
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(number)) return number;
   }
   return null;
 }
@@ -221,6 +244,34 @@ function resolveAgentIdentity(
   };
 }
 
+function resolveEventStatus(
+  event: AgentExecutionSourceEvent,
+  category: AgentExecutionEventCategory,
+): AgentExecutionEventStatus {
+  const explicit = metadataString(
+    event.metadata,
+    MISSION_CONTROL_METADATA_KEYS.eventStatus,
+  )
+    ?.toLowerCase()
+    .replaceAll(/[\s.-]+/g, "_");
+  if (explicit === "running" || explicit === "in_progress") return "RUNNING";
+  if (
+    explicit === "completed" ||
+    explicit === "complete" ||
+    explicit === "succeeded" ||
+    explicit === "success"
+  )
+    return "COMPLETED";
+  if (explicit === "failed" || explicit === "failure" || explicit === "error")
+    return "FAILED";
+  if (explicit === "waiting_approval" || explicit === "pending_approval")
+    return "WAITING_APPROVAL";
+
+  if (category === "FAILURE" || event.level === "ERROR") return "FAILED";
+  if (category === "APPROVAL" && !event.endTime) return "WAITING_APPROVAL";
+  return event.endTime ? "COMPLETED" : "RUNNING";
+}
+
 export function projectAgentExecution({
   trace,
   events,
@@ -235,24 +286,55 @@ export function projectAgentExecution({
   const agent = resolveAgentIdentity(trace, sortedEvents);
   const projectedEvents: AgentExecutionEvent[] = sortedEvents.map((event) => {
     const classification = classifyAgentExecutionEvent(event);
+    const explicitConfidence = metadataNumber(
+      event.metadata,
+      MISSION_CONTROL_METADATA_KEYS.eventConfidence,
+    );
+    const latencySeconds = event.endTime
+      ? Math.max(
+          0,
+          (event.endTime.getTime() - event.startTime.getTime()) / 1_000,
+        )
+      : null;
+    const explicitApiLatency = metadataNumber(
+      event.metadata,
+      MISSION_CONTROL_METADATA_KEYS.apiLatencyMs,
+    );
     return {
       id: event.id,
       parentEventId: event.parentObservationId,
       category: classification.category,
       categoryProvenance: classification.provenance,
-      confidence: classification.confidence,
+      confidence:
+        explicitConfidence !== null &&
+        explicitConfidence >= 0 &&
+        explicitConfidence <= 1
+          ? explicitConfidence
+          : classification.confidence,
       name: event.name ?? event.type,
       observationType: event.type,
       level: event.level,
+      status: resolveEventStatus(event, classification.category),
       statusMessage: event.statusMessage,
       startedAt: event.startTime,
       endedAt: event.endTime,
-      latencySeconds: event.endTime
-        ? Math.max(
-            0,
-            (event.endTime.getTime() - event.startTime.getTime()) / 1_000,
-          )
-        : null,
+      latencySeconds,
+      apiLatencyMs:
+        explicitApiLatency !== null && explicitApiLatency >= 0
+          ? explicitApiLatency
+          : event.type === "TOOL" && latencySeconds !== null
+            ? latencySeconds * 1_000
+            : null,
+      toolUsed:
+        metadataString(
+          event.metadata,
+          MISSION_CONTROL_METADATA_KEYS.toolName,
+        ) ?? (event.type === "TOOL" ? event.name : null),
+      reasoningSummary: metadataString(
+        event.metadata,
+        MISSION_CONTROL_METADATA_KEYS.reasoningSummary,
+        "reasoning.summary",
+      ),
       agent: event.type === "AGENT" ? agent : null,
       metadata: event.metadata,
     };
@@ -266,22 +348,23 @@ export function projectAgentExecution({
           Math.max(...completedEvents.map((event) => event.endedAt!.getTime())),
         )
       : null;
-  const failed = projectedEvents.some(
-    (event) => event.category === "FAILURE" || event.level === "ERROR",
-  );
-  const completed = projectedEvents.some(
-    (event) => event.category === "COMPLETION",
-  );
+  const terminalEvent = [...projectedEvents]
+    .reverse()
+    .find(
+      (event) =>
+        event.category === "COMPLETION" || event.category === "FAILURE",
+    );
 
   return {
     id: trace.id,
     traceId: trace.id,
     projectId: trace.projectId,
     name: trace.name ?? agent.name,
-    status: failed
-      ? "FAILED"
-      : completed
-        ? "SUCCEEDED"
+    status:
+      terminalEvent?.category === "FAILURE"
+        ? "FAILED"
+        : terminalEvent?.category === "COMPLETION"
+          ? "SUCCEEDED"
         : endedAt
           ? "UNKNOWN"
           : "RUNNING",

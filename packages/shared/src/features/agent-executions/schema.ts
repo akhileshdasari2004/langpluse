@@ -34,6 +34,17 @@ export const AgentExecutionStatus = z.enum([
 
 export type AgentExecutionStatus = z.infer<typeof AgentExecutionStatus>;
 
+export const AgentExecutionEventStatus = z.enum([
+  "RUNNING",
+  "COMPLETED",
+  "FAILED",
+  "WAITING_APPROVAL",
+]);
+
+export type AgentExecutionEventStatus = z.infer<
+  typeof AgentExecutionEventStatus
+>;
+
 export const AgentIdentitySchema = z.object({
   key: z.string().min(1),
   name: z.string().min(1),
@@ -52,10 +63,14 @@ export const AgentExecutionEventSchema = z.object({
   name: z.string().min(1),
   observationType: z.string().min(1),
   level: z.string().min(1),
+  status: AgentExecutionEventStatus,
   statusMessage: z.string().nullable(),
   startedAt: z.date(),
   endedAt: z.date().nullable(),
   latencySeconds: z.number().nonnegative().nullable(),
+  apiLatencyMs: z.number().nonnegative().nullable(),
+  toolUsed: z.string().nullable(),
+  reasoningSummary: z.string().nullable(),
   agent: AgentIdentitySchema.nullable(),
   metadata: z.record(z.string(), jsonSchema.nullable().or(z.undefined())),
 });
