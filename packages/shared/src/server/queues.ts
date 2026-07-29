@@ -152,6 +152,10 @@ export const ExperimentCreateEventSchema = z.object({
   runId: z.string(),
   description: z.string().optional(),
 });
+export const SimulationExecutionEventSchema = z.object({
+  projectId: z.string(),
+  simulationRunId: z.string(),
+});
 export const DataRetentionProcessingEventSchema = z.object({
   projectId: z.string(),
   retention: z.number(),
@@ -340,6 +344,9 @@ export type OtelIngestionEventQueueType = z.infer<typeof OtelIngestionEvent>;
 export type ExperimentCreateEventType = z.infer<
   typeof ExperimentCreateEventSchema
 >;
+export type SimulationExecutionEventType = z.infer<
+  typeof SimulationExecutionEventSchema
+>;
 export type PostHogIntegrationProcessingEventType = z.infer<
   typeof PostHogIntegrationProcessingEventSchema
 >;
@@ -405,6 +412,7 @@ export enum QueueName {
   EventPropagationQueue = "event-propagation-queue",
   NotificationQueue = "notification-queue",
   MonitorQueue = "monitor-queue",
+  ExecutionSimulation = "execution-simulation-queue",
 }
 
 export enum QueueJobs {
@@ -442,6 +450,7 @@ export enum QueueJobs {
   EventPropagationJob = "event-propagation-job",
   NotificationJob = "notification-job",
   MonitorJob = "monitor-job",
+  ExecutionSimulationJob = "execution-simulation-job",
 }
 
 export type TQueueJobTypes = {
@@ -628,5 +637,11 @@ export type TQueueJobTypes = {
     id: string;
     payload: MonitorQueueEventInput;
     name: QueueJobs.MonitorJob;
+  };
+  [QueueName.ExecutionSimulation]: {
+    timestamp: Date;
+    id: string;
+    payload: SimulationExecutionEventType;
+    name: QueueJobs.ExecutionSimulationJob;
   };
 };

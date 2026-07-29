@@ -52,6 +52,7 @@ import { BackgroundMigrationManager } from "./backgroundMigrations/backgroundMig
 import { prisma } from "@langfuse/shared/src/db";
 import { ClickhouseReadSkipCache } from "./utils/clickhouseReadSkipCache";
 import { experimentCreateQueueProcessor } from "./queues/experimentQueue";
+import { executionSimulationQueueProcessor } from "./queues/executionSimulationQueue";
 import { traceDeleteProcessor } from "./queues/traceDelete";
 import { projectDeleteProcessor } from "./queues/projectDelete";
 import {
@@ -471,6 +472,14 @@ if (env.QUEUE_CONSUMER_EXPERIMENT_CREATE_QUEUE_IS_ENABLED === "true") {
     {
       concurrency: env.LANGFUSE_EXPERIMENT_CREATOR_WORKER_CONCURRENCY,
     },
+  );
+}
+
+if (env.QUEUE_CONSUMER_EXECUTION_SIMULATION_QUEUE_IS_ENABLED === "true") {
+  WorkerManager.register(
+    QueueName.ExecutionSimulation,
+    executionSimulationQueueProcessor,
+    { concurrency: env.LANGFUSE_EXECUTION_SIMULATION_WORKER_CONCURRENCY },
   );
 }
 
