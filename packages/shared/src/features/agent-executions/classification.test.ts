@@ -210,4 +210,33 @@ describe("projectAgentExecution", () => {
       toolUsed: null,
     });
   });
+
+  it("projects explicit per-event agent identities for multi-agent runs", () => {
+    const projection = projectAgentExecution({
+      trace: {
+        id: "trace-1",
+        projectId: "project-1",
+        name: "multi-agent-run",
+        timestamp: new Date("2026-01-01T00:00:00.000Z"),
+        metadata: {},
+        version: null,
+      },
+      events: [
+        sourceEvent({
+          metadata: {
+            "mission_control.agent.key": "planner",
+            "mission_control.agent.name": "Planner Agent",
+            "mission_control.agent.version": "2.1",
+          },
+        }),
+      ],
+    });
+
+    expect(projection.events[0]?.agent).toEqual({
+      key: "planner",
+      name: "Planner Agent",
+      version: "2.1",
+      provenance: "EXPLICIT",
+    });
+  });
 });

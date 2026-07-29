@@ -244,6 +244,39 @@ function resolveAgentIdentity(
   };
 }
 
+function resolveEventAgentIdentity(
+  event: AgentExecutionSourceEvent,
+  fallback: AgentIdentity,
+): AgentIdentity | null {
+  const key = metadataString(
+    event.metadata,
+    MISSION_CONTROL_METADATA_KEYS.agentKey,
+    "agent.id",
+    "gen_ai.agent.id",
+  );
+  const name = metadataString(
+    event.metadata,
+    MISSION_CONTROL_METADATA_KEYS.agentName,
+    "agent.name",
+    "gen_ai.agent.name",
+  );
+  const version = metadataString(
+    event.metadata,
+    MISSION_CONTROL_METADATA_KEYS.agentVersion,
+    "agent.version",
+  );
+
+  if (key || name) {
+    return {
+      key: key ?? name!,
+      name: name ?? key!,
+      version: version ?? event.version,
+      provenance: "EXPLICIT",
+    };
+  }
+  return event.type === "AGENT" ? fallback : null;
+}
+
 function resolveEventStatus(
   event: AgentExecutionSourceEvent,
   category: AgentExecutionEventCategory,
@@ -335,7 +368,7 @@ export function projectAgentExecution({
         MISSION_CONTROL_METADATA_KEYS.reasoningSummary,
         "reasoning.summary",
       ),
-      agent: event.type === "AGENT" ? agent : null,
+      agent: resolveEventAgentIdentity(event, agent),
       metadata: event.metadata,
     };
   });
@@ -365,9 +398,9 @@ export function projectAgentExecution({
         ? "FAILED"
         : terminalEvent?.category === "COMPLETION"
           ? "SUCCEEDED"
-        : endedAt
-          ? "UNKNOWN"
-          : "RUNNING",
+          : endedAt
+            ? "UNKNOWN"
+            : "RUNNING",
     startedAt,
     endedAt,
     latencySeconds: endedAt
