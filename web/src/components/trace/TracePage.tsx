@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { PRODUCT_NAME } from "@/src/constants";
 import { api } from "@/src/utils/api";
 import { RunWorkbench } from "@/src/features/agent-executions/components/RunWorkbench";
+import { LiveExecutionConsoleSkeleton } from "@/src/features/agent-executions/components/LiveExecutionConsole";
 
 export function TracePage({
   traceId,
@@ -87,7 +88,7 @@ export function TracePage({
     return <ErrorPage message="The run projection could not be loaded." />;
   }
   if (mode === "run" && !runProjection.data) {
-    return <div className="p-3">Loading run...</div>;
+    return <LiveExecutionConsoleSkeleton />;
   }
 
   const isSharedTrace = trace.data.public;

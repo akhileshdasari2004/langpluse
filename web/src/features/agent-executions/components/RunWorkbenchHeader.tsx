@@ -1,11 +1,10 @@
+import type { AgentExecutionStatus } from "@langfuse/shared";
 import { Badge, type BadgeProps } from "@/src/components/ui/badge";
 import { formatIntervalSeconds } from "@/src/utils/dates";
 import { useRunProjection } from "./RunProjectionContext";
+import { useLiveRunStore } from "../live/LiveRunStoreProvider";
 
-const statusVariant: Record<
-  ReturnType<typeof useRunProjection>["status"],
-  BadgeProps["variant"]
-> = {
+const statusVariant: Record<AgentExecutionStatus, BadgeProps["variant"]> = {
   RUNNING: "warning",
   SUCCEEDED: "success",
   FAILED: "error",
@@ -14,6 +13,11 @@ const statusVariant: Record<
 
 export function RunWorkbenchHeader() {
   const run = useRunProjection();
+  const buffer = useLiveRunStore((state) => state.buffer);
+  const latencySeconds =
+    buffer.endedAt !== null
+      ? (buffer.endedAt.getTime() - run.startedAt.getTime()) / 1_000
+      : run.latencySeconds;
 
   return (
     <section
@@ -21,17 +25,18 @@ export function RunWorkbenchHeader() {
       aria-label="Run summary"
     >
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <Badge variant={statusVariant[run.status]}>{run.status}</Badge>
+        <Badge variant={statusVariant[buffer.status]}>{buffer.status}</Badge>
         <span className="font-bold">{run.agent.name}</span>
         {run.agent.version && (
           <Badge variant="outline">v{run.agent.version}</Badge>
         )}
         <span className="text-muted-foreground">
-          {run.events.length} {run.events.length === 1 ? "event" : "events"}
+          {buffer.events.length}{" "}
+          {buffer.events.length === 1 ? "event" : "events"}
         </span>
-        {run.latencySeconds !== null && (
+        {latencySeconds !== null && (
           <span className="text-muted-foreground">
-            {formatIntervalSeconds(run.latencySeconds)}
+            {formatIntervalSeconds(latencySeconds)}
           </span>
         )}
         {run.agent.provenance !== "EXPLICIT" && (
