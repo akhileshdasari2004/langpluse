@@ -293,7 +293,7 @@ Dependencies
 
 ## Decision Explorer
 
-Status: IN PROGRESS
+Status: DONE
 
 Display every decision considered.
 
@@ -575,7 +575,7 @@ Every feature should solve a real engineering problem.
 
 [ ] Tool Explorer
 
-[ ] Decision Explorer
+[x] Decision Explorer
 
 [ ] Workflow Graph
 

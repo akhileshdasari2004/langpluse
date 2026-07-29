@@ -58,6 +58,18 @@ type SalesEmailStep = {
   promptSummary?: string;
   toolSelectionReason?: string;
   rejectedAlternatives?: string[];
+  decisionAlternatives?: Array<{
+    id: string;
+    title: string;
+    disposition: "selected" | "rejected";
+    reason: string;
+    confidence?: number;
+    risk: "low" | "medium" | "high" | "critical";
+    executionImpact: "positive" | "neutral" | "negative";
+    dependencyKeys?: string[];
+  }>;
+  decisionRisk?: "low" | "medium" | "high" | "critical";
+  decisionExecutionImpact?: "positive" | "neutral" | "negative";
   memoryUsed?: string[];
   memoryItems?: Array<{
     id: string;
@@ -426,6 +438,42 @@ const STEPS: SalesEmailStep[] = [
       "discount-led — no approved commercial concession exists",
       "generic check-in — ignores verified account priorities",
     ],
+    decisionRisk: "low",
+    decisionExecutionImpact: "positive",
+    decisionAlternatives: [
+      {
+        id: "value-led-renewal",
+        title: "Value-led renewal",
+        disposition: "selected",
+        reason:
+          "Verified EU residency and automation-growth evidence directly supports the renewal objective.",
+        confidence: 0.91,
+        risk: "low",
+        executionImpact: "positive",
+        dependencyKeys: ["reason"],
+      },
+      {
+        id: "discount-led",
+        title: "Discount-led outreach",
+        disposition: "rejected",
+        reason: "No approved commercial concession exists for this account.",
+        confidence: 0.94,
+        risk: "high",
+        executionImpact: "negative",
+        dependencyKeys: ["crm"],
+      },
+      {
+        id: "generic-check-in",
+        title: "Generic check-in",
+        disposition: "rejected",
+        reason:
+          "It omits verified customer priorities and lowers expected relevance.",
+        confidence: 0.88,
+        risk: "medium",
+        executionImpact: "neutral",
+        dependencyKeys: ["memory"],
+      },
+    ],
     inputTokens: 246,
     outputTokens: 54,
     output: {
@@ -527,6 +575,41 @@ const STEPS: SalesEmailStep[] = [
     rejectedAlternatives: [
       "automatic send — approval is required",
       "Slack-only follow-up — does not satisfy the customer outreach goal",
+    ],
+    decisionRisk: "medium",
+    decisionExecutionImpact: "positive",
+    decisionAlternatives: [
+      {
+        id: "manager-approved-email",
+        title: "Manager-approved email",
+        disposition: "selected",
+        reason:
+          "Policy validation requires human approval before customer-facing delivery.",
+        confidence: 0.96,
+        risk: "medium",
+        executionImpact: "positive",
+        dependencyKeys: ["updated-plan", "policy-observation"],
+      },
+      {
+        id: "automatic-send",
+        title: "Automatic send",
+        disposition: "rejected",
+        reason: "The policy result requires manager approval before delivery.",
+        confidence: 0.99,
+        risk: "critical",
+        executionImpact: "negative",
+        dependencyKeys: ["policy-observation"],
+      },
+      {
+        id: "slack-only-follow-up",
+        title: "Slack-only follow-up",
+        disposition: "rejected",
+        reason: "It does not satisfy the requested customer outreach outcome.",
+        confidence: 0.93,
+        risk: "high",
+        executionImpact: "negative",
+        dependencyKeys: ["updated-plan"],
+      },
     ],
     output: {
       selected: "manager-approved-email",
@@ -742,6 +825,33 @@ const run = async (
               "mission_control.decision.rejected_alternatives": JSON.stringify(
                 step.rejectedAlternatives,
               ),
+            }
+          : {}),
+        ...(step.decisionAlternatives
+          ? {
+              "mission_control.decision.alternatives": JSON.stringify(
+                step.decisionAlternatives.map(
+                  ({ dependencyKeys, ...alternative }) => ({
+                    ...alternative,
+                    dependencies: (dependencyKeys ?? []).map(
+                      (key) => keyToId.get(key)!,
+                    ),
+                  }),
+                ),
+              ),
+              "mission_control.decision.selected":
+                step.decisionAlternatives.find(
+                  (alternative) => alternative.disposition === "selected",
+                )?.title ?? "",
+            }
+          : {}),
+        ...(step.decisionRisk
+          ? { "mission_control.decision.risk": step.decisionRisk }
+          : {}),
+        ...(step.decisionExecutionImpact
+          ? {
+              "mission_control.decision.execution_impact":
+                step.decisionExecutionImpact,
             }
           : {}),
         ...(step.memoryUsed

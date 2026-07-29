@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Decision Explorer in progress
+Status: Active Development — Decision Explorer complete
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -753,7 +753,7 @@ masked-secret scenarios are production-complete and accessible.
 
 ## Milestone 7 — Decision Explorer
 
-**Status: IN PROGRESS**
+**Status: DONE**
 
 **Numbering note:** The approved implementation request names this Decision
 Explorer delivery “Milestone 8.” This plan retains its original milestone
@@ -815,6 +815,36 @@ None.
 
 The CRM rejected → ERP rejected → Gmail selected example can be represented
 from realistic seed data, including missing/conflicting evidence states.
+
+### Completed implementation
+
+- [x] Added an explicit client-safe decision instrumentation contract for the
+      selected path, rejected paths, rationale, confidence, risk, execution
+      impact, and linked dependencies. Legacy alternatives remain visible but
+      absent selection/rationale is labelled rather than inferred.
+- [x] Extended the deterministic sales-email scenario with selected and
+      rejected strategy and delivery paths, including realistic policy and
+      account-evidence dependencies.
+- [x] Added the responsive Decision Explorer workbench tab with local search,
+      URL-shareable decision/alternative/branch/risk state, summary metrics,
+      accessible empty states, and an expandable evidence inspector.
+- [x] Reused React Flow and the existing bounded ELK layout to render animated
+      selected branches, rejected branches, MiniMap, zoom controls, and a
+      production-safe list fallback for oversized trees.
+- [x] Added alternative-path comparison with selection/rejection, reason,
+      confidence, dependencies, risk, and execution impact; no new database,
+      API route, global store, dependency, or duplicated trace payload path was
+      required.
+- [x] Validated the shared projection (9 focused tests), Decision Explorer
+      model (2 client tests), shared compilation, web typecheck, formatting,
+      targeted zero-warning lint, and instruction-shim consistency.
+- [ ] Run authenticated browser review against a seeded local stack. Local
+      PostgreSQL/ClickHouse credentials and the configured Playwright MCP
+      runtime are unavailable in this workspace.
+- [ ] Complete a full optimized production web build. The repository's
+      webpack build process remained active without terminal output in this
+      workspace; successful shared and web compile checks are recorded above,
+      but no production-build pass is claimed.
 
 ## Milestone 8 — Replay Engine
 

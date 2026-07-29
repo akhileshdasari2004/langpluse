@@ -57,6 +57,17 @@
   stroke-width: 2;
 }
 
+.mission-control-decision-selected-edge .react-flow__edge-path {
+  stroke: rgb(16 185 129);
+  stroke-width: 2.25;
+}
+
+.mission-control-decision-rejected-edge .react-flow__edge-path {
+  stroke: rgb(239 68 68 / 0.7);
+  stroke-width: 1.75;
+  stroke-dasharray: 5 4;
+}
+
 .react-flow__edge.selected .react-flow__edge-path {
   stroke: hsl(var(--primary-accent));
   stroke-width: 2.5;

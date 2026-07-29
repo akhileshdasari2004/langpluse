@@ -1,7 +1,13 @@
 import type { AgentExecutionProjection } from "@langfuse/shared";
 import { TraceDetailBody } from "@/src/components/trace/TraceDetailBody";
 import type { ComponentProps } from "react";
-import { Activity, BrainCircuit, Database, Workflow } from "lucide-react";
+import {
+  Activity,
+  BrainCircuit,
+  Database,
+  GitBranch,
+  Workflow,
+} from "lucide-react";
 import { StringParam, useQueryParam } from "use-query-params";
 import {
   TabsBar,
@@ -19,6 +25,7 @@ import { LiveRunStoreProvider } from "../live/LiveRunStoreProvider";
 import { useRunEventStream } from "../live/useRunEventStream";
 import { AgentBrainView } from "../brain/AgentBrainView";
 import { MemoryExplorer } from "../memory/MemoryExplorer";
+import { DecisionExplorer } from "../decisions/DecisionExplorer";
 
 type Trace = NonNullable<ComponentProps<typeof TraceDetailBody>["trace"]>;
 
@@ -52,7 +59,8 @@ function RunWorkbenchContent({
   const activeView =
     runViewParam === "trace" ||
     runViewParam === "brain" ||
-    runViewParam === "memory"
+    runViewParam === "memory" ||
+    runViewParam === "decisions"
       ? runViewParam
       : "live";
   const isSeededDemo = projection.events.some(
@@ -89,6 +97,10 @@ function RunWorkbenchContent({
             <Database className="size-3.5" />
             Memory
           </TabsBarTrigger>
+          <TabsBarTrigger value="decisions" className="gap-1.5">
+            <GitBranch className="size-3.5" />
+            Decisions
+          </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
             Trace inspector
@@ -115,6 +127,12 @@ function RunWorkbenchContent({
             traceId={trace.id}
             observations={trace.observations}
           />
+        </TabsBarContent>
+        <TabsBarContent
+          value="decisions"
+          className="mt-0 flex min-h-0 flex-1 overflow-hidden"
+        >
+          <DecisionExplorer />
         </TabsBarContent>
         <TabsBarContent
           value="trace"
