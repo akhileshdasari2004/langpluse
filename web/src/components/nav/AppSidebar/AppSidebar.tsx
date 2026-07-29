@@ -529,10 +529,10 @@ const DemoBadge = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Langpluse workspaces">
+            <SidebarMenuButton asChild tooltip="Mission Control workspaces">
               <Link href="/">
                 <Grid2X2 className="h-4 w-4" />
-                <span>Langpluse workspaces</span>
+                <span>Mission Control workspaces</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -595,7 +595,7 @@ const VersionLabel = ({ state }: { state: SidebarVersionState }) => {
         <DropdownMenuItem disabled>
           {state.deployment === "self-hosted"
             ? "Self-hosted deployment"
-            : "Managed Langpluse deployment"}
+            : "Managed Mission Control deployment"}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         {update ? (

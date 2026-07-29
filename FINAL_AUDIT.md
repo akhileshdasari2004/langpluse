@@ -1,4 +1,4 @@
-# Langpluse Final Product Audit
+# Mission Control Final Product Audit
 
 **Audit date:** 2026-07-29
 **Repository state:** `main`, 43 commits ahead of `origin/main`, clean before
@@ -8,7 +8,7 @@ quality gates, and production readiness.
 
 ## Executive decision
 
-Langpluse is now the founder-facing operating-console direction of this
+Mission Control is now the founder-facing operating-console direction of this
 repository. Its reusable foundation is strong: project-scoped authentication,
 RBAC, tenant isolation, tRPC/TanStack Query server state, ClickHouse execution
 storage, Prisma control-plane data, background workers, dashboards, charts,

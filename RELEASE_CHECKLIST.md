@@ -1,4 +1,4 @@
-# Langpluse Release Checklist
+# Mission Control Release Checklist
 
 **Audit date:** 2026-07-29
 **Release status:** BLOCKED — runtime configuration and browser verification are

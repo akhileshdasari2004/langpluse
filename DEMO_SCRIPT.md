@@ -1,6 +1,6 @@
-# Langpluse — 5-Minute Founder Demo
+# Mission Control — 5-Minute Founder Demo
 
-Langpluse is the operating console for a production AI agent. This demo
+Mission Control is the operating console for a production AI agent. This demo
 follows one coherent workflow: an enterprise renewal email for **Northstar
 Logistics**. The agent verifies account and contract facts, retrieves approved
 memory, selects a safe strategy, obtains human approval, and sends the email.

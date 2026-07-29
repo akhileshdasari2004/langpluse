@@ -1,4 +1,4 @@
-# Langpluse
+# Mission Control
 ## Enterprise AI Agent Operating Console
 
 Version: 1.0
@@ -19,7 +19,7 @@ Every completed task must be checked off.
 
 # PRODUCT VISION
 
-Langpluse is the developer console for enterprise AI agents.
+Mission Control is the developer console for enterprise AI agents.
 
 It enables engineers to observe, debug, replay, understand and optimize AI agents operating in production.
 
@@ -31,7 +31,7 @@ Datadog
 +
 GitHub Timeline
 +
-Langpluse for AI Agents
+Mission Control for AI Agents
 
 NOT
 
@@ -91,7 +91,7 @@ When an agent fails nobody knows:
 
 • How should execution improve?
 
-Langpluse solves this.
+Mission Control solves this.
 
 ------------------------------------------------------------
 

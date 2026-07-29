@@ -9,7 +9,7 @@ const snapshot = buildMissionControlDashboardSnapshot({
   now: new Date("2026-07-28T12:00:00.000Z"),
 });
 
-describe("Langpluse dashboard model", () => {
+describe("Mission Control dashboard model", () => {
   it("prepares three honest execution series per hour", () => {
     const points = prepareExecutionTrend(snapshot);
     expect(points).toHaveLength(72);

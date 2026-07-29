@@ -1,4 +1,4 @@
-# Langpluse Implementation Plan
+# Mission Control Implementation Plan
 
 Status: Active Development — Simulation complete
 Source of truth: `PROJECT_PRD.md` version 1.0  
@@ -6,7 +6,7 @@ Baseline: Langfuse-derived monorepo on `main`
 
 ## 1. Executive architecture comparison
 
-Langpluse should be implemented as an additive agent-operating layer over
+Mission Control should be implemented as an additive agent-operating layer over
 the existing observability platform. The current system already solves the
 expensive horizontal problems:
 

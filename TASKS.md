@@ -1,10 +1,10 @@
-# Langpluse Migration Tasks
+# Mission Control Migration Tasks
 
 Status: IN PROGRESS — founder-facing information architecture refinement
 
 Source of truth: `PROJECT_PRD.md`
 
-This plan transforms the Langfuse-derived platform into Langpluse, an
+This plan transforms the Langfuse-derived platform into Mission Control, an
 enterprise AI agent operating console. It is additive: existing product
 capabilities, enterprise controls, public contracts, and architectural
 boundaries remain functional throughout the migration.

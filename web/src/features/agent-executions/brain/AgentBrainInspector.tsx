@@ -83,7 +83,7 @@ function BrainNodeInspector({
           <p>{node.reasoning}</p>
         ) : (
           <EmptyEvidence>
-            No reasoning summary was emitted. Langpluse does not infer private
+            No reasoning summary was emitted. Mission Control does not infer private
             chain-of-thought.
           </EmptyEvidence>
         )}

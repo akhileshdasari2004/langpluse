@@ -4,7 +4,7 @@ import { ROUTES } from "./routes";
 const routeTitles = ROUTES.map((route) => route.title);
 const routePathnames = ROUTES.map((route) => route.pathname);
 
-describe("Langpluse navigation", () => {
+describe("Mission Control navigation", () => {
   it("exposes the agent execution surfaces", () => {
     expect(routeTitles).toEqual(
       expect.arrayContaining([
