@@ -150,7 +150,7 @@ export function prepareToolUsage(
   snapshot: MissionControlDashboardSnapshot,
 ): DataPoint[] {
   return snapshot.topUsedTools.map((tool) => ({
-    time_dimension: tool.name,
+    time_dimension: undefined,
     dimension: tool.name,
     metric: tool.calls,
   }));

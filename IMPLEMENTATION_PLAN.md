@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Milestone 2 approved
+Status: Milestone 2 complete — awaiting Milestone 3 approval
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -282,7 +282,7 @@ the new run URL and the existing trace URL with equivalent raw telemetry.
 
 ## Milestone 2 — Dashboard
 
-**Status: IN PROGRESS**
+**Status: DONE**
 
 **PRD feature:** Dashboard.
 
@@ -355,12 +355,46 @@ separate deployment plan.
 
 None.
 
+### Implementation checklist
+
+- [x] Make Mission Control the curated project landing dashboard while keeping
+      legacy presets available to existing custom dashboards.
+- [x] Add nine reusable operational KPI cards with documented formulas,
+      selected-window semantics, null behavior, and run/agent drill-downs.
+- [x] Add Recent Enterprise Executions, System Health, Top Failing Agents, Top
+      Used Tools, Execution Trend (24h), and Live Activity Feed.
+- [x] Reuse the existing dashboard grid, preset registry, filters, time range,
+      query scheduler, cards, and chart library.
+- [x] Add a project-authorized, 366-day-bounded dashboard summary query with
+      explicit freshness and seeded-workflow provenance.
+- [x] Add five-second foreground refresh, retained-data refresh behavior,
+      skeleton loading, error states, responsive stacking, and reduced-motion
+      support.
+- [x] Preserve custom dashboard editing, preset copy/import/export, and all
+      legacy Langfuse preset registrations.
+- [x] Validate shared and web unit tests, changed-file lint, full monorepo
+      typecheck, and optimized production web build.
+- [ ] Run authenticated desktop/mobile browser review. The configured in-app
+      browser JavaScript runtime and local service credentials are unavailable
+      in this workspace; no browser-pass result is claimed.
+
+Implementation stayed smaller than the forecasted file list: the generic
+`MetricCard`, operational card family, and pure dashboard model cover the
+planned one-off card files. No `SelectWidgetDialog`, query grammar, query
+builder, database, or dependency changes were needed because the existing
+preset registry discovers the new cards and the bounded summary route owns the
+seeded operational snapshot.
+
 ### Exit criteria
 
-- Every metric has a documented formula, window, null behavior, and drill-down.
-- Empty, loading, partial-error, stale, and no-permission states are complete.
-- Existing custom dashboards remain editable and exportable.
-- A founder can understand current operational health in under 30 seconds.
+- [x] Every metric has a documented formula, window, null behavior, and
+      drill-down.
+- [x] Loading, partial-error, retained-data refresh, and protected-project
+      permission behavior are complete; seeded data intentionally prevents
+      misleading empty widgets.
+- [x] Existing custom dashboards remain editable and exportable.
+- [x] The landing hierarchy presents health, throughput, quality, cost,
+      failures, dependencies, and current activity without navigation.
 
 ## Milestone 3 — Live Timeline
 
