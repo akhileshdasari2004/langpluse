@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Milestone 3 approved
+Status: Active Development — Milestone 3 complete
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -398,7 +398,7 @@ seeded operational snapshot.
 
 ## Milestone 3 — Live Timeline
 
-**Status: IN PROGRESS**
+**Status: DONE**
 
 **PRD feature:** Live Agent Timeline.
 
@@ -476,6 +476,61 @@ small existing fetch-stream abstraction.
 Reconnect, duplicate, late, out-of-order, malformed, high-rate, authorization,
 and terminal-state tests pass. The timeline remains responsive for at least
 5,000 events and announces meaningful updates accessibly.
+
+### Completed implementation
+
+- [x] Extended the shared execution projection with explicit running,
+      completed, failed, and approval states plus confidence, tool, reasoning
+      summary, and API-latency fields. Reasoning summaries are read only from
+      explicit instrumentation and never inferred as hidden chain-of-thought.
+- [x] Expanded the deterministic sales-email workflow with planning, CRM and
+      ERP tools, memory retrieval, a rate-limit error, retry, reasoning,
+      decision, human approval, send, and completion events.
+- [x] Added the authenticated, project-scoped SSE endpoint at
+      `web/src/pages/api/project/[projectId]/runs/[runId]/stream.ts` with
+      snapshot, append, correction, heartbeat, completion, and recoverable
+      error frames.
+- [x] Added resumable `(start_time, event_id)` cursors, `Last-Event-ID`
+      handling, 55-second connection rotation, four-stream per-user limits,
+      1,000-event snapshots, 12 KB metadata compaction, and deterministic
+      cleanup.
+- [x] Reused the initial tRPC projection and ClickHouse observation
+      repositories; no schema, Redis fan-out, worker, queue, WebSocket service,
+      or new dependency was required.
+- [x] Added a scoped Zustand live-run store with a bounded 5,000-event buffer,
+      deterministic ordering/deduplication, corrections, reconnect state,
+      auto-follow, paused-follow, and unread-event counts.
+- [x] Built the responsive, virtualized execution console with semantic event
+      styling, live status/freshness, progress metrics, search, category and
+      status filters, expandable metadata, UTC timestamps, duration,
+      confidence, tool, reasoning summary, API latency, animated transitions,
+      empty-filter recovery, and skeleton loading.
+- [x] Preserved the existing Langfuse trace detail/timeline as the adjacent
+      `Trace inspector` workbench view instead of duplicating or replacing it.
+- [x] Added negative authorization coverage and tests for malformed frames,
+      cursor parsing, duplicate/late/out-of-order delivery, correction,
+      reconnect snapshots, high-rate bounds, unread behavior, filtering, and
+      terminal state.
+- [x] Completed the repository security review: stream data remains
+      project-scoped; administrators retain audited access; no secrets or
+      payloads are logged; read-only SSE uses same-origin session cookies;
+      metadata and connection resource use are bounded.
+
+### Validation evidence
+
+- [x] `pnpm --filter=@langfuse/shared build`
+- [x] `pnpm --filter=web typecheck`
+- [x] Targeted ESLint with zero warnings across every Milestone 3 file.
+- [x] 15 Milestone 3 in-source tests passed.
+- [x] Shared agent-execution classification tests passed.
+- [x] Full optimized Next.js production build passed and emitted the new
+      `/api/project/[projectId]/runs/[runId]/stream` route.
+- [x] Static responsive and accessibility review completed, including
+      keyboard-operable expansion, labeled filters, status announcements,
+      focus-safe collapsed metadata, bounded virtualization, and responsive
+      card/toolbar breakpoints. In-app browser automation was unavailable in
+      this execution environment, so no browser screenshot artifact was
+      captured.
 
 ## Milestone 4 — Agent Brain
 
