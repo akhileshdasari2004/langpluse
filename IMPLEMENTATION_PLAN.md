@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Decision Explorer complete
+Status: Active Development — Execution Replay in progress
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -847,6 +847,13 @@ from realistic seed data, including missing/conflicting evidence states.
       but no production-build pass is claimed.
 
 ## Milestone 8 — Replay Engine
+
+**Status: IN PROGRESS**
+
+**Numbering note:** The approved implementation request names this Execution
+Replay delivery “Milestone 9.” This plan retains its original milestone
+numbering so AI Execution Coach and later milestones are not renumbered or
+altered.
 
 **PRD feature:** Execution Replay.
 
