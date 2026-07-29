@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Milestone 2 complete — awaiting Milestone 3 approval
+Status: Active Development — Milestone 3 approved
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -397,6 +397,8 @@ seeded operational snapshot.
       failures, dependencies, and current activity without navigation.
 
 ## Milestone 3 — Live Timeline
+
+**Status: IN PROGRESS**
 
 **PRD feature:** Live Agent Timeline.
 

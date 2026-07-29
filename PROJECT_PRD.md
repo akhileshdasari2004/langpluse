@@ -171,7 +171,7 @@ Execution History
 
 ## Live Agent Timeline
 
-Status: TODO
+Status: IN PROGRESS
 
 Real-time execution stream.
 
