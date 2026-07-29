@@ -27,7 +27,6 @@ import { formatIntervalSeconds } from "@/src/utils/dates";
 import { useRunProjection } from "./RunProjectionContext";
 import { LiveTimelineEventRow } from "./LiveTimelineEventRow";
 import { useLiveRunStore } from "../live/LiveRunStoreProvider";
-import { useRunEventStream } from "../live/useRunEventStream";
 import {
   filterSemanticTimelineEvents,
   getAvailableTimelineCategories,
@@ -125,13 +124,6 @@ export function LiveExecutionConsole() {
   const isSeededDemo = projection.events.some(
     (event) => event.metadata.scenario === "sales-email-agent",
   );
-
-  useRunEventStream({
-    projectId: projection.projectId,
-    runId: projection.id,
-    timestamp: projection.startedAt,
-    demo: isSeededDemo,
-  });
 
   const categories = useMemo(
     () => getAvailableTimelineCategories(buffer.events),

@@ -127,6 +127,64 @@ describe("buildAgentBrainGraph", () => {
       true,
     );
   });
+
+  it("preserves explicit cyclic dependencies without recursing", () => {
+    const cyclic = {
+      ...projection,
+      events: projection.events.slice(0, 2).map((projectedEvent, index) => ({
+        ...projectedEvent,
+        metadata: {
+          ...projectedEvent.metadata,
+          "mission_control.dependencies": index === 0 ? '["plan"]' : '["goal"]',
+        },
+      })),
+    };
+
+    const graph = buildAgentBrainGraph(cyclic);
+
+    expect(graph.edges.map(({ source, target }) => [source, target])).toEqual([
+      ["plan", "goal"],
+      ["goal", "plan"],
+    ]);
+    expect(graph.edges.every((edge) => edge.provenance === "EXPLICIT")).toBe(
+      true,
+    );
+  });
+
+  it("projects a 5,000-event execution without losing dependency evidence", () => {
+    const baseEvent = projection.events[0];
+    const events = Array.from({ length: 5_000 }, (_, index) => ({
+      ...baseEvent,
+      id: `event-${index}`,
+      name: `Execution step ${index + 1}`,
+      startedAt: new Date(projection.startedAt.getTime() + index * 1_000),
+      endedAt: new Date(projection.startedAt.getTime() + index * 1_000 + 250),
+      latencySeconds: 0.25,
+      metadata: {
+        ...baseEvent.metadata,
+        "mission_control.brain.kind":
+          index === 0 ? "goal" : index === 4_999 ? "completion" : "reasoning",
+        ...(index > 0
+          ? {
+              "mission_control.dependencies": JSON.stringify([
+                `event-${index - 1}`,
+              ]),
+            }
+          : {}),
+      },
+    }));
+
+    const graph = buildAgentBrainGraph({ ...projection, events });
+
+    expect(graph.nodes).toHaveLength(5_000);
+    expect(graph.edges).toHaveLength(4_999);
+    expect(graph.nodes.at(-1)).toMatchObject({
+      id: "event-4999",
+      kind: "COMPLETION",
+      dependencyIds: ["event-4998"],
+      dependencyProvenance: "EXPLICIT",
+    });
+  });
 });
 
 describe("buildAgentCommunicationGraph", () => {

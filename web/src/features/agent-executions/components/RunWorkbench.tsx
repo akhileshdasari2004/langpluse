@@ -1,7 +1,7 @@
 import type { AgentExecutionProjection } from "@langfuse/shared";
 import { TraceDetailBody } from "@/src/components/trace/TraceDetailBody";
 import type { ComponentProps } from "react";
-import { Activity, Workflow } from "lucide-react";
+import { Activity, BrainCircuit, Workflow } from "lucide-react";
 import { StringParam, useQueryParam } from "use-query-params";
 import {
   TabsBar,
@@ -9,10 +9,15 @@ import {
   TabsBarList,
   TabsBarTrigger,
 } from "@/src/components/ui/tabs-bar";
-import { RunProjectionProvider } from "./RunProjectionContext";
+import {
+  RunProjectionProvider,
+  useRunProjection,
+} from "./RunProjectionContext";
 import { RunWorkbenchHeader } from "./RunWorkbenchHeader";
 import { LiveExecutionConsole } from "./LiveExecutionConsole";
 import { LiveRunStoreProvider } from "../live/LiveRunStoreProvider";
+import { useRunEventStream } from "../live/useRunEventStream";
+import { AgentBrainView } from "../brain/AgentBrainView";
 
 type Trace = ComponentProps<typeof TraceDetailBody>["trace"];
 
@@ -42,7 +47,21 @@ function RunWorkbenchContent({
   context: ComponentProps<typeof TraceDetailBody>["context"];
 }) {
   const [runViewParam, setRunViewParam] = useQueryParam("runView", StringParam);
-  const activeView = runViewParam === "trace" ? "trace" : "live";
+  const projection = useRunProjection();
+  const activeView =
+    runViewParam === "trace" || runViewParam === "brain"
+      ? runViewParam
+      : "live";
+  const isSeededDemo = projection.events.some(
+    (event) => event.metadata.scenario === "sales-email-agent",
+  );
+
+  useRunEventStream({
+    projectId: projection.projectId,
+    runId: projection.id,
+    timestamp: projection.startedAt,
+    demo: isSeededDemo,
+  });
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -59,6 +78,10 @@ function RunWorkbenchContent({
             <Activity className="size-3.5" />
             Live timeline
           </TabsBarTrigger>
+          <TabsBarTrigger value="brain" className="gap-1.5">
+            <BrainCircuit className="size-3.5" />
+            Agent Brain
+          </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
             Trace inspector
@@ -69,6 +92,12 @@ function RunWorkbenchContent({
           className="mt-0 flex min-h-0 flex-1 overflow-hidden"
         >
           <LiveExecutionConsole />
+        </TabsBarContent>
+        <TabsBarContent
+          value="brain"
+          className="mt-0 flex min-h-0 flex-1 overflow-hidden"
+        >
+          <AgentBrainView />
         </TabsBarContent>
         <TabsBarContent
           value="trace"

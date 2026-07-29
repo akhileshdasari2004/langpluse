@@ -16,6 +16,7 @@ import { api } from "@/src/utils/api";
 import NextAdapterPages from "next-query-params/pages";
 import { QueryParamProvider } from "use-query-params";
 
+import "@xyflow/react/dist/style.css";
 import "@/src/styles/globals.css";
 import { AppLayout } from "@/src/components/layouts/app-layout";
 import { useEffect, useRef } from "react";

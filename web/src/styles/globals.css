@@ -38,6 +38,38 @@
   --font-weight-bold: 600;
 }
 
+/* Mission Control Agent Brain: React Flow consumes the existing theme tokens
+   and preserves motion preferences while keeping dependency/handoff causality
+   visually distinct. */
+.react-flow__node {
+  transition:
+    opacity 200ms ease,
+    filter 200ms ease;
+}
+
+.mission-control-brain-edge .react-flow__edge-path {
+  stroke: hsl(var(--muted-foreground));
+  stroke-width: 1.5;
+}
+
+.mission-control-handoff-edge .react-flow__edge-path {
+  stroke: rgb(168 85 247);
+  stroke-width: 2;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--primary-accent));
+  stroke-width: 2.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.animated path,
+  .react-flow__node {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 @theme inline {
   /* Disable unused built-in Tailwind color palettes. */
   --color-lime-*: initial;

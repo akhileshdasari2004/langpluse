@@ -78,6 +78,27 @@ describe("computeGraphLayout", () => {
     )!.width;
     expect(multiWidth).toBeGreaterThan(singleWidth);
   });
+
+  it("honors explicit node dimensions for reusable graph renderers", async () => {
+    const graph: GraphCanvasData = {
+      nodes: [
+        {
+          ...node("agent-brain-node"),
+          width: 304,
+          height: 160,
+        },
+      ],
+      edges: [],
+    };
+
+    const layout = await computeGraphLayout(graph, {}, "DOWN");
+
+    expect(layout.nodes[0]).toMatchObject({
+      id: "agent-brain-node",
+      width: 304,
+      height: 160,
+    });
+  });
 });
 
 describe("dedupeEdges", () => {

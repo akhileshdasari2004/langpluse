@@ -4,6 +4,9 @@ export type GraphNodeData = {
   id: string;
   label: string;
   type: string;
+  /** Optional presentation dimensions for specialized renderers using ELK. */
+  width?: number;
+  height?: number;
 };
 
 /**

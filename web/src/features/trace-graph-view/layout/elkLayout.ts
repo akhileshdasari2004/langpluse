@@ -130,12 +130,12 @@ function buildElkGraph(
   dedupedEdges: GraphCanvasData["edges"],
   counterReserve: Map<string, number>,
   direction: GraphLayoutDirection,
+  wrapRight: boolean,
 ): ElkNode {
   const children = graph.nodes.map((node) => {
-    const { width, height } = measureNode(
-      node,
-      counterReserve.get(node.id) ?? 0,
-    );
+    const measured = measureNode(node, counterReserve.get(node.id) ?? 0);
+    const width = node.width ?? measured.width;
+    const height = node.height ?? measured.height;
     // The synthetic anchors mean "the run starts/ends here" — pin them to
     // the first/last layer so edge shape can't strand them mid-graph (e.g.
     // a root span's `root→__end__` edge would otherwise place __end__ in
@@ -177,7 +177,9 @@ function buildElkGraph(
       // rows near the panel's aspect ratio, so fit-zoom stays readable
       // instead of shrinking a 1×N ribbon to nothing (bounded — see
       // MAX_WRAP_NODES).
-      ...(direction === "RIGHT" && graph.nodes.length <= MAX_WRAP_NODES
+      ...(direction === "RIGHT" &&
+      wrapRight &&
+      graph.nodes.length <= MAX_WRAP_NODES
         ? {
             "elk.layered.wrapping.strategy": "MULTI_EDGE",
             "elk.aspectRatio": "1.6",
@@ -235,6 +237,7 @@ export async function computeGraphLayout(
   graph: GraphCanvasData,
   nodeToObservationsMap: Record<string, string[]> = {},
   direction: GraphLayoutDirection = "DOWN",
+  wrapRight = true,
 ): Promise<GraphLayout> {
   if (graph.nodes.length === 0) {
     return { nodes: [], edges: [], width: 0, height: 0 };
@@ -271,7 +274,7 @@ export async function computeGraphLayout(
   let result: ElkNode;
   try {
     result = await elk.layout(
-      buildElkGraph(graph, dedupedEdges, counterReserve, direction),
+      buildElkGraph(graph, dedupedEdges, counterReserve, direction, wrapRight),
     );
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
