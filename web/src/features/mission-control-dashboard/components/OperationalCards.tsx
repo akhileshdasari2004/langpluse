@@ -6,10 +6,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, CircleAlert, Clock3 } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
-import {
-  MissionControlCard,
-  SeededDataBadge,
-} from "./MissionControlCard";
+import { MissionControlCard, SeededDataBadge } from "./MissionControlCard";
 import { cn } from "@/src/utils/tailwind";
 
 const statusVariant: Record<
@@ -31,7 +28,7 @@ export function RecentExecutionsCard(props: {
   return (
     <MissionControlCard
       title="Recent Enterprise Executions"
-      description="Latest runs across the seeded enterprise sales-email workflow"
+      description="Latest activity from the Northstar Logistics renewal workflow"
       isLoading={props.isLoading}
       isError={props.isError}
       className={props.className}
@@ -57,7 +54,7 @@ export function RecentExecutionsCard(props: {
           {props.snapshot.recentExecutions.map((execution) => (
             <div
               key={execution.id}
-              className="grid grid-cols-[1.45fr_1.1fr_.7fr_.65fr_.55fr] items-center gap-3 border-b px-4 py-3 text-xs last:border-b-0 hover:bg-muted/35"
+              className="hover:bg-muted/35 grid grid-cols-[1.45fr_1.1fr_.7fr_.65fr_.55fr] items-center gap-3 border-b px-4 py-3 text-xs last:border-b-0"
             >
               <div className="min-w-0">
                 <div className="truncate" title={execution.account}>
@@ -126,7 +123,7 @@ export function SystemHealthCard(props: {
           {props.snapshot.systemHealth.map((service) => (
             <div
               key={service.id}
-              className="flex items-center justify-between rounded-md border bg-muted/20 p-3"
+              className="bg-muted/20 flex items-center justify-between rounded-md border p-3"
             >
               <div>
                 <div className="flex items-center gap-2 text-xs">
@@ -188,7 +185,7 @@ export function TopFailingAgentsCard(props: {
                     {agent.failures}
                   </span>
                 </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="bg-muted mt-1.5 h-1.5 overflow-hidden rounded-full">
                   <div
                     className="h-full rounded-full bg-red-500/80 transition-[width] duration-700 motion-reduce:transition-none"
                     style={{
@@ -238,7 +235,7 @@ export function LiveActivityCard(props: {
             return (
               <div
                 key={activity.id}
-                className="group flex gap-3 rounded-md p-2 transition-colors hover:bg-muted/45"
+                className="group hover:bg-muted/45 flex gap-3 rounded-md p-2 transition-colors"
               >
                 <div className="relative pt-0.5">
                   <Icon

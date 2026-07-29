@@ -11,7 +11,7 @@ import { useEnvLabel } from "@/src/hooks/useEnvLabel";
 
 /**
  * Slim mobile top chrome for the minimal-chrome shell: hamburger · centered
- * Langfuse wordmark · account. Everything page-specific (title, actions,
+ * Mission Control wordmark · account. Everything page-specific (title, actions,
  * controls, tabs) lives below in the scrollable content (see MobilePageTitle),
  * so this stays a thin, sticky brand bar.
  *
@@ -53,7 +53,7 @@ export const MobileTopBar = ({
         )}
       </div>
 
-      {/* Center: the Langfuse wordmark. */}
+      {/* Center: the Mission Control wordmark. */}
       <TopbarBrand variant="wordmark" />
 
       {/* Right: the assistant launcher (prominent, gradient-bordered so it

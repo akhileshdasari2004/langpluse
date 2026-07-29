@@ -25,11 +25,11 @@ export function MissionControlCard(props: {
     <Card
       className={cn(
         "animate-in fade-in slide-in-from-bottom-1 flex h-full min-h-36 flex-col overflow-hidden duration-500 motion-reduce:animate-none",
-        "transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-border-contrast hover:shadow-md motion-reduce:hover:translate-y-0",
+        "hover:border-border-contrast transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0",
         props.className,
       )}
     >
-      <CardHeader className="flex-row items-start justify-between space-y-0 border-b bg-gradient-to-br from-muted/45 to-transparent pb-3">
+      <CardHeader className="from-muted/45 flex-row items-start justify-between space-y-0 border-b bg-gradient-to-br to-transparent pb-3">
         <div className="min-w-0 space-y-1">
           <CardTitle className="flex items-center gap-2 text-sm tracking-normal">
             {props.title}
@@ -49,9 +49,7 @@ export function MissionControlCard(props: {
         </div>
         {props.action}
       </CardHeader>
-      <CardContent
-        className={cn("min-h-0 flex-1 p-4", props.contentClassName)}
-      >
+      <CardContent className={cn("min-h-0 flex-1 p-4", props.contentClassName)}>
         {props.isLoading ? (
           <DashboardCardSkeleton />
         ) : props.isError ? (
@@ -74,6 +72,7 @@ function DashboardCardSkeleton() {
   return (
     <div
       className="flex h-full min-h-24 flex-col justify-center gap-3"
+      role="status"
       aria-label="Loading dashboard data"
     >
       <Skeleton className="h-8 w-2/5" />
@@ -87,7 +86,7 @@ export function SeededDataBadge() {
   return (
     <span
       className="text-muted-foreground flex shrink-0 items-center gap-1 text-[10px]"
-      title="Data generated from the seeded Enterprise Sales Email workflow"
+      title="Data generated from the seeded Northstar Logistics renewal workflow"
     >
       <Radio className="h-3 w-3" />
       Seeded workflow

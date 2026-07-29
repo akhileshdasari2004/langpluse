@@ -112,7 +112,7 @@ export function TracePage({
         asChild
         size="sm"
         variant="default"
-        title="Sign in to Langfuse"
+        title={`Sign in to ${PRODUCT_NAME}`}
         className="px-3"
       >
         <Link href={`/auth/sign-in?targetPath=${encodedTargetPath}`}>
@@ -131,7 +131,7 @@ export function TracePage({
     <Page
       headerProps={{
         title: traceDetailTitle(trace.data) ?? trace.data.id,
-        itemType: "TRACE",
+        itemType: mode === "run" ? undefined : "TRACE",
         breadcrumb: [
           {
             name: mode === "run" ? "Agent Runs" : "Traces",

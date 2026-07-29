@@ -162,7 +162,7 @@ export function AgentBrainView() {
       .catch(() => {
         if (!cancelled) {
           setLayoutError(
-            "The execution graph could not be laid out. Raw trace evidence remains available in Trace inspector.",
+            "The execution graph could not be laid out. Raw execution evidence remains available in the Raw execution view.",
           );
         }
       })
@@ -413,7 +413,7 @@ export function AgentBrainView() {
                   {model.nodeCount.toLocaleString()} nodes and{" "}
                   {model.edgeCount.toLocaleString()} dependencies would block
                   the browser. Use Agent map for the production-safe aggregate
-                  or Trace inspector for raw evidence.
+                  or Raw execution for the underlying evidence.
                 </p>
                 {mode === "execution" && (
                   <Button

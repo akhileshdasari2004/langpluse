@@ -110,7 +110,10 @@ export type MissionControlDashboardSnapshot = {
 };
 
 const seededNumber = (projectId: string) =>
-  [...projectId].reduce((total, character) => total + character.charCodeAt(0), 0);
+  [...projectId].reduce(
+    (total, character) => total + character.charCodeAt(0),
+    0,
+  );
 
 const dateBefore = (now: Date, seconds: number) =>
   new Date(now.getTime() - seconds * 1_000);
@@ -137,7 +140,11 @@ export function buildMissionControlDashboardSnapshot(params: {
     value,
     previousValue,
     trend:
-      value === previousValue ? "steady" : value > previousValue ? "up" : "down",
+      value === previousValue
+        ? "steady"
+        : value > previousValue
+          ? "up"
+          : "down",
   });
 
   const trendBase = Math.floor(now.getTime() / (60 * 60 * 1_000));
@@ -177,10 +184,10 @@ export function buildMissionControlDashboardSnapshot(params: {
     },
     recentExecutions: [
       {
-        id: "sales-email-acme-renewal",
-        agent: "Sales Email Orchestrator",
-        workflow: "Renewal outreach",
-        account: "Acme Manufacturing",
+        id: "northstar-renewal-orchestration",
+        agent: "Execution Orchestrator",
+        workflow: "Northstar renewal outreach",
+        account: "Northstar Logistics",
         status: "RUNNING",
         startedAt: dateBefore(now, 18),
         latencySeconds: null,
@@ -188,10 +195,10 @@ export function buildMissionControlDashboardSnapshot(params: {
         costUsd: 0.041,
       },
       {
-        id: "sales-email-northstar-expansion",
-        agent: "Account Research Agent",
-        workflow: "Expansion signal research",
-        account: "Northstar Health",
+        id: "northstar-account-context",
+        agent: "Tool Agent",
+        workflow: "Verified account context",
+        account: "Northstar Logistics",
         status: "SUCCEEDED",
         startedAt: dateBefore(now, 76),
         latencySeconds: 2.14,
@@ -199,10 +206,10 @@ export function buildMissionControlDashboardSnapshot(params: {
         costUsd: 0.092,
       },
       {
-        id: "sales-email-contoso-follow-up",
-        agent: "Personalization Agent",
-        workflow: "Executive follow-up",
-        account: "Contoso Energy",
+        id: "northstar-memory-retrieval",
+        agent: "Memory Agent",
+        workflow: "Renewal context retrieval",
+        account: "Northstar Logistics",
         status: "SUCCEEDED",
         startedAt: dateBefore(now, 143),
         latencySeconds: 1.72,
@@ -210,10 +217,10 @@ export function buildMissionControlDashboardSnapshot(params: {
         costUsd: 0.078,
       },
       {
-        id: "sales-email-globex-recovery",
-        agent: "CRM Enrichment Agent",
-        workflow: "Pipeline recovery",
-        account: "Globex Retail",
+        id: "northstar-contract-verification",
+        agent: "Tool Agent",
+        workflow: "Renewal contract verification",
+        account: "Northstar Logistics",
         status: "FAILED",
         startedAt: dateBefore(now, 228),
         latencySeconds: 3.96,
@@ -221,10 +228,10 @@ export function buildMissionControlDashboardSnapshot(params: {
         costUsd: 0.063,
       },
       {
-        id: "sales-email-umbrella-intro",
-        agent: "Compliance Review Agent",
-        workflow: "Regulated-industry intro",
-        account: "Umbrella Financial",
+        id: "northstar-policy-review",
+        agent: "Reviewer Agent",
+        workflow: "Customer outreach approval",
+        account: "Northstar Logistics",
         status: "SUCCEEDED",
         startedAt: dateBefore(now, 312),
         latencySeconds: 2.43,
@@ -232,10 +239,10 @@ export function buildMissionControlDashboardSnapshot(params: {
         costUsd: 0.104,
       },
       {
-        id: "sales-email-initech-reengagement",
-        agent: "Sales Email Orchestrator",
-        workflow: "Dormant lead re-engagement",
-        account: "Initech Systems",
+        id: "northstar-approved-delivery",
+        agent: "Execution Orchestrator",
+        workflow: "Approved renewal delivery",
+        account: "Northstar Logistics",
         status: "SUCCEEDED",
         startedAt: dateBefore(now, 451),
         latencySeconds: 1.58,
@@ -275,35 +282,35 @@ export function buildMissionControlDashboardSnapshot(params: {
     ],
     topFailingAgents: [
       {
-        name: "CRM Enrichment Agent",
+        name: "Tool Agent",
         team: "Revenue Operations",
         failures: 14,
         failureRate: 3.8,
       },
       {
-        name: "Account Research Agent",
-        team: "Sales Intelligence",
+        name: "Planner Agent",
+        team: "Sales Automation",
         failures: 9,
         failureRate: 2.1,
       },
       {
-        name: "Compliance Review Agent",
-        team: "Trust & Safety",
+        name: "Reviewer Agent",
+        team: "Revenue Operations",
         failures: 7,
         failureRate: 1.6,
       },
       {
-        name: "Personalization Agent",
-        team: "Growth Engineering",
+        name: "Memory Agent",
+        team: "Knowledge Systems",
         failures: 5,
         failureRate: 0.9,
       },
     ],
     topUsedTools: [
       { name: "Salesforce CRM", calls: 3_842 + pulse, successRate: 99.1 },
-      { name: "Company Intelligence", calls: 2_914, successRate: 98.7 },
-      { name: "Vector Memory Search", calls: 2_506, successRate: 97.9 },
-      { name: "Email Policy Validator", calls: 1_988, successRate: 99.8 },
+      { name: "NetSuite ERP", calls: 2_914, successRate: 98.7 },
+      { name: "Enterprise Memory Pipeline", calls: 2_506, successRate: 97.9 },
+      { name: "Campaign Policy Engine", calls: 1_988, successRate: 99.8 },
       { name: "SendGrid Delivery", calls: 1_427, successRate: 99.4 },
     ],
     executionTrend,
@@ -311,40 +318,40 @@ export function buildMissionControlDashboardSnapshot(params: {
       {
         id: `activity-${pulse}-1`,
         occurredAt: dateBefore(now, 4),
-        agent: "Sales Email Orchestrator",
-        summary: "Started renewal outreach for Acme Manufacturing",
+        agent: "Execution Orchestrator",
+        summary: "Started Northstar Logistics renewal outreach",
         category: "EXECUTION",
         status: "INFO",
       },
       {
         id: `activity-${pulse}-2`,
         occurredAt: dateBefore(now, 19),
-        agent: "Account Research Agent",
-        summary: "Found three expansion signals in account research",
+        agent: "Memory Agent",
+        summary: "Retrieved verified Northstar renewal context",
         category: "MEMORY",
         status: "SUCCESS",
       },
       {
         id: `activity-${pulse}-3`,
         occurredAt: dateBefore(now, 47),
-        agent: "Compliance Review Agent",
-        summary: "Approved regulated-industry email policy checks",
+        agent: "Reviewer Agent",
+        summary: "Approved Northstar customer outreach",
         category: "APPROVAL",
         status: "SUCCESS",
       },
       {
         id: `activity-${pulse}-4`,
         occurredAt: dateBefore(now, 81),
-        agent: "CRM Enrichment Agent",
-        summary: "Salesforce enrichment timed out after the final retry",
+        agent: "Tool Agent",
+        summary: "Recovered Northstar contract verification after retry",
         category: "FAILURE",
         status: "ERROR",
       },
       {
         id: `activity-${pulse}-5`,
         occurredAt: dateBefore(now, 126),
-        agent: "Personalization Agent",
-        summary: "Generated executive-ready email with a 96 quality score",
+        agent: "Planner Agent",
+        summary: "Selected Northstar value-led renewal strategy",
         category: "TOOL",
         status: "SUCCESS",
       },

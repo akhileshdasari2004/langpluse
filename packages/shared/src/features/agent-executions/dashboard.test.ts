@@ -48,6 +48,16 @@ describe("buildMissionControlDashboardSnapshot", () => {
     expect(snapshot.recentExecutions.length).toBeGreaterThan(0);
     expect(snapshot.systemHealth.length).toBeGreaterThan(0);
     expect(snapshot.activity.length).toBeGreaterThan(0);
+    expect(
+      snapshot.recentExecutions.every(
+        (execution) => execution.account === "Northstar Logistics",
+      ),
+    ).toBe(true);
+    expect(
+      snapshot.activity.every((activity) =>
+        activity.summary.includes("Northstar"),
+      ),
+    ).toBe(true);
     expect(snapshot).toEqual(
       buildMissionControlDashboardSnapshot({
         projectId: "project-1",

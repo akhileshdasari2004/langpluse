@@ -111,11 +111,11 @@ function RunWorkbenchContent({
           </TabsBarTrigger>
           <TabsBarTrigger value="simulation" className="gap-1.5">
             <FlaskConical className="size-3.5" />
-            Simulate
+            Simulation
           </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
-            Trace inspector
+            Raw execution
           </TabsBarTrigger>
         </TabsBarList>
         <TabsBarContent
