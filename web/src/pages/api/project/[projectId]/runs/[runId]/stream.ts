@@ -390,11 +390,20 @@ export default async function handler(
     organizationId = project.orgId;
   }
 
-  throwIfNoProjectAccess({
-    role: projectRole ?? "NONE",
-    admin: session?.user?.admin,
-    scope: "project:read",
-  });
+  if (!projectRole) {
+    res.status(403).json({ message: "Insufficient project access" });
+    return;
+  }
+  try {
+    throwIfNoProjectAccess({
+      role: projectRole,
+      admin: session?.user?.admin,
+      scope: "project:read",
+    });
+  } catch {
+    res.status(403).json({ message: "Insufficient project access" });
+    return;
+  }
 
   if (session?.user?.admin === true && organizationId) {
     await sendAdminAccessWebhook({
