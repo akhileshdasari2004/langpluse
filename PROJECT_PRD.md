@@ -199,7 +199,7 @@ Every event streams live.
 
 ## Agent Brain
 
-Status: TODO
+Status: IN PROGRESS
 
 Visualises internal reasoning.
 
@@ -333,7 +333,7 @@ Confidence
 
 ## Workflow Graph
 
-Status: TODO
+Status: IN PROGRESS
 
 Interactive graph.
 
@@ -353,7 +353,7 @@ Execution order.
 
 ## Multi-Agent Graph
 
-Status: TODO
+Status: IN PROGRESS
 
 Display communication between
 

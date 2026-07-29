@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Milestone 3 complete
+Status: Active Development — Milestone 4 approved
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -533,6 +533,8 @@ and terminal-state tests pass. The timeline remains responsive for at least
       captured.
 
 ## Milestone 4 — Agent Brain
+
+**Status: IN PROGRESS**
 
 **PRD features:** Agent Brain, Workflow Graph, Multi-Agent Graph.
 
