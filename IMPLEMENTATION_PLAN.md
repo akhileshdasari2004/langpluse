@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Execution Replay complete
+Status: Active Development — Simulation complete
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -1030,7 +1030,7 @@ None initially. Reuse installed AI SDK providers and the in-app-agent runtime.
 
 ## Milestone 10 — Simulation
 
-**Status: IN PROGRESS**
+**Status: DONE**
 
 **PRD feature:** Simulation Engine.
 
@@ -1116,6 +1116,36 @@ None.
 All five PRD scenarios are deterministic, isolated, cancellable, clearly marked
 as simulated, and inspectable through timeline, brain, memory, tools, decisions,
 graphs, replay, root cause, and coach.
+
+### Completed implementation
+
+- [x] Added immutable, validated scenario contracts for CRM offline, Slack
+      failure, ERP timeout, missing memory, customer reply, generic tool
+      failure, rate limits, and a different-model policy.
+- [x] Built a deterministic fixture-backed reasoning compiler that produces a
+      fresh simulated execution projection, event-level differences, and
+      explicit reasoning provenance for every simulation. It never invokes a
+      source-run tool, credential, endpoint, or network destination.
+- [x] Added project-scoped `SimulationScenario` and `SimulationRun` models,
+      additive migration, project cascade cleanup, actor retention safety,
+      indexes, and compact result persistence.
+- [x] Added an audited, RBAC-protected scenario/run API with source-run
+      project validation, queue availability checks, cancellation requests,
+      and tenant-bound worker reads.
+- [x] Registered the isolated BullMQ worker with bounded concurrency and
+      cancellation checkpoints. Expected simulated failures are persisted as
+      comparison outcomes rather than retried as worker faults.
+- [x] Added the Run Workbench Simulation lab with controlled-condition
+      selection, progress, cancellation, skeleton state, an explicit no-side-
+      effects boundary, and baseline-versus-simulated status, duration,
+      reasoning, and event-difference comparison.
+- [x] Validated the shared compiler (2 focused tests), Prisma schema with a
+      local validation URL, shared/worker/web typechecks, and zero-warning
+      changed-file lint.
+- [ ] Run an authenticated browser review and a real Redis/PostgreSQL/
+      ClickHouse worker execution. The workspace has no local service
+      credentials or configured Playwright MCP runtime, so no browser or
+      deployed-queue success is claimed.
 
 ## Milestone 11 — Analytics
 

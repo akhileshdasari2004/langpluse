@@ -445,7 +445,7 @@ Displays estimated improvement.
 
 ## Simulation Engine
 
-Status: IN PROGRESS
+Status: DONE
 
 Replay execution under
 
@@ -587,7 +587,7 @@ Every feature should solve a real engineering problem.
 
 [ ] AI Execution Coach
 
-[ ] Simulation
+[x] Simulation
 
 [ ] Enterprise Dashboard
 

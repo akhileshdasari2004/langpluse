@@ -7,6 +7,7 @@ import {
   Database,
   GitBranch,
   Workflow,
+  FlaskConical,
 } from "lucide-react";
 import { StringParam, useQueryParam } from "use-query-params";
 import {
@@ -28,6 +29,7 @@ import { MemoryExplorer } from "../memory/MemoryExplorer";
 import { DecisionExplorer } from "../decisions/DecisionExplorer";
 import { RunReplayProvider } from "../replay/RunReplayProvider";
 import { ReplayToolbar } from "../replay/ReplayToolbar";
+import { SimulationConsole } from "../../execution-simulation/components/SimulationConsole";
 
 type Trace = NonNullable<ComponentProps<typeof TraceDetailBody>["trace"]>;
 
@@ -64,7 +66,8 @@ function RunWorkbenchContent({
     runViewParam === "trace" ||
     runViewParam === "brain" ||
     runViewParam === "memory" ||
-    runViewParam === "decisions"
+    runViewParam === "decisions" ||
+    runViewParam === "simulation"
       ? runViewParam
       : "live";
   const isSeededDemo = projection.events.some(
@@ -106,6 +109,10 @@ function RunWorkbenchContent({
             <GitBranch className="size-3.5" />
             Decisions
           </TabsBarTrigger>
+          <TabsBarTrigger value="simulation" className="gap-1.5">
+            <FlaskConical className="size-3.5" />
+            Simulate
+          </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
             Trace inspector
@@ -138,6 +145,12 @@ function RunWorkbenchContent({
           className="mt-0 flex min-h-0 flex-1 overflow-hidden"
         >
           <DecisionExplorer />
+        </TabsBarContent>
+        <TabsBarContent
+          value="simulation"
+          className="mt-0 min-h-0 flex-1 overflow-hidden"
+        >
+          <SimulationConsole />
         </TabsBarContent>
         <TabsBarContent
           value="trace"

@@ -6,6 +6,7 @@ import {
   ExecutionSimulationQueue,
   getSimulationRun,
   getSimulationScenario,
+  getTraceById,
   listSimulationRuns,
   listSimulationScenarios,
   parseSimulationResult,
@@ -91,6 +92,16 @@ export const executionSimulationRouter = createTRPCRouter({
         projectId: input.projectId,
         scope: "project:update",
       });
+      // Resolve the source under the requested project before persisting the
+      // scenario. This prevents an arbitrary trace ID from becoming a queued
+      // cross-project probe and keeps the worker input tenant-bound.
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- the routing reader is the compatibility boundary for legacy and v4 trace storage.
+      const sourceRun = await getTraceById({
+        projectId: input.projectId,
+        traceId: input.definition.sourceRunId,
+        renderingProps: { truncated: true, shouldJsonParse: false },
+      });
+      if (!sourceRun) throw new TRPCError({ code: "NOT_FOUND" });
       const scenario = await createSimulationScenario({
         projectId: input.projectId,
         name: input.name,
