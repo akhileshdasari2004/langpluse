@@ -293,7 +293,7 @@ Dependencies
 
 ## Decision Explorer
 
-Status: TODO
+Status: IN PROGRESS
 
 Display every decision considered.
 

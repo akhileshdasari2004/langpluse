@@ -1,6 +1,6 @@
 # Mission Control Implementation Plan
 
-Status: Active Development — Memory Explorer approved
+Status: Active Development — Decision Explorer in progress
 Source of truth: `PROJECT_PRD.md` version 1.0  
 Baseline: Langfuse-derived monorepo on `main`
 
@@ -752,6 +752,12 @@ Success, retry, timeout, fallback, dependency, approval, large-payload, and
 masked-secret scenarios are production-complete and accessible.
 
 ## Milestone 7 — Decision Explorer
+
+**Status: IN PROGRESS**
+
+**Numbering note:** The approved implementation request names this Decision
+Explorer delivery “Milestone 8.” This plan retains its original milestone
+numbering so Replay Engine and later milestones are not renumbered or altered.
 
 **PRD feature:** Decision Explorer.
 
