@@ -662,3 +662,20 @@ functional, and rollback is proven.
       approval and evidence.
 - [ ] Never commit failing intermediate states.
 - [ ] Include validation evidence and rollback notes in each milestone handoff.
+
+## Trelium Vertical Slice — Exception Desk
+
+- [x] Select a real Trelium-aligned control boundary: human handling of
+      ambiguous or unsafe operations.
+- [x] Create the detailed product contract and mark the PRD feature IN PROGRESS.
+- [x] Add additive, tenant-scoped exception records and migration.
+- [x] Add repository contracts, optimistic resolution and audit-log coverage.
+- [x] Add project-scoped tRPC read/resolve procedures.
+- [x] Add the run-workbench Exception Desk with accessible terminal actions.
+- [x] Seed a deterministic customer-policy conflict.
+- [x] Add shared schema and repository tests.
+- [x] Run Node 24 Prisma/schema checks, typechecks and targeted tests.
+- [x] Mark the PRD feature DONE and commit the completed vertical slice.
+- [ ] Run the full production build and browser review with deployed service
+      credentials; those require the external environment and are not claimed
+      by this vertical slice.

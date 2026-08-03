@@ -1350,3 +1350,61 @@ demo-only placeholders to compress the schedule.
 No implementation, dependency installation, schema migration, PRD status
 change, or source-code modification should begin until this plan and the target
 milestone are explicitly approved.
+
+## Trelium Vertical Slice — Exception Desk
+
+Status: DONE
+
+This user-approved vertical slice adds an auditable human exception decision
+boundary for a selected run. It is deliberately narrower than a workflow
+runtime: it records an approval, rejection, or escalation for a future runtime
+to consume; it does not claim to execute external tools.
+
+### Reuse
+
+- Existing project RBAC, tRPC procedures and audit logging.
+- PostgreSQL/Prisma control-plane storage.
+- Run Workbench, tabs, badges, skeletons, cards, JSON presentation and
+  project-scoped query patterns.
+- Existing deterministic seed CLI.
+
+### Files to modify
+
+- `PROJECT_PRD.md`
+- `TASKS.md`
+- `packages/shared/prisma/schema.prisma`
+- `packages/shared/src/index.ts`
+- `packages/shared/src/server/index.ts`
+- `web/src/server/api/root.ts`
+- `web/src/features/agent-executions/components/RunWorkbench.tsx`
+- sales-email seed scenario and relevant documentation.
+
+### Files to create
+
+- `TRELIUM_EXCEPTION_DESK_PRD.md`
+- additive Prisma migration
+- shared exception schemas and repository
+- feature-local tRPC router, UI, model, tests and README
+
+### Schema/API/state
+
+- Add project/run-scoped exception records with enum status, severity,
+  versioned resolution and bounded evidence JSON.
+- Add read and resolve tRPC procedures; route every resolution through existing
+  project RBAC and immutable audit logging.
+- Keep query state in React Query and only local selection/dialog intent in the
+  run view. No global store or effect.
+
+### Dependencies
+
+None.
+
+### Exit criteria
+
+- A deterministic customer-policy conflict can be inspected and resolved in the run
+  workbench.
+- Resolution is atomic, tenant-scoped, idempotent for an identical terminal
+  request, and conflict-safe for stale state.
+- No direct tool execution is implied.
+- Targeted shared tests and Node 24 shared/web typechecks pass. Full production
+  build and browser review remain environment-gated validation steps.

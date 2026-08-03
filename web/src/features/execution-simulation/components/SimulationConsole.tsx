@@ -3,6 +3,7 @@ import type {
   CustomerReplyIntent,
   SimulationCondition,
   SimulationConditionType,
+  SimulationExecutionResult,
 } from "@langfuse/shared";
 import {
   ArrowRight,
@@ -101,6 +102,13 @@ function simulationStatusPresentation(status: string) {
       };
   }
 }
+
+type SimulationComparisonRun = {
+  id: string;
+  status: string;
+  result: SimulationExecutionResult | null;
+  error: string | null;
+};
 
 export function SimulationConsole() {
   const run = useRunProjection();
@@ -331,11 +339,7 @@ function SimulationComparison({
   loading,
   onCancel,
 }: {
-  run: ReturnType<
-    typeof api.executionSimulation.listRuns.useQuery
-  >["data"] extends Array<infer Item> | undefined
-    ? Item | undefined
-    : never;
+  run: SimulationComparisonRun | undefined;
   loading: boolean;
   onCancel: (simulationRunId: string) => void;
 }) {

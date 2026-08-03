@@ -467,6 +467,37 @@ Show new reasoning.
 
 ------------------------------------------------------------
 
+## Exception Desk
+
+Status: DONE
+
+Enterprise agents must stop when an action is ambiguous, unsafe, or blocked.
+The Exception Desk gives an authorized operator one auditable place to review
+the affected run, inspect its evidence, and approve, reject, or escalate the
+proposed action.
+
+Shows
+
+Exception type
+
+Severity
+
+Affected run and source events
+
+Proposed action
+
+Evidence summary
+
+Decision history
+
+Operator and timestamp
+
+The desk records a durable control-plane decision. It must never claim to
+resume or perform an external action unless a connected runtime explicitly
+consumes that decision.
+
+------------------------------------------------------------
+
 ## Enterprise Dashboard
 
 Status: TODO
@@ -592,6 +623,8 @@ Every feature should solve a real engineering problem.
 [ ] AI Execution Coach
 
 [x] Simulation
+
+[x] Exception Desk
 
 [ ] Enterprise Dashboard
 

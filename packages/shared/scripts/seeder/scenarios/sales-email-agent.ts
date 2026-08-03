@@ -4,6 +4,7 @@ import {
   createObservationsCh,
   createTrace,
   createTracesCh,
+  recordAgentExecutionException,
   type ObservationRecordInsertType,
 } from "../../../src/server";
 import type { ObservationType } from "../../../src/domain";
@@ -955,6 +956,29 @@ const run = async (
   for (const batch of chunk(events, 500)) {
     await createEventsCh(batch);
   }
+
+  await recordAgentExecutionException({
+    input: {
+      projectId: ctx.projectId,
+      runId: traceId,
+      eventId: keyToId.get("approval"),
+      dedupeKey: "manager-approval-before-customer-delivery",
+      type: "CUSTOMER_POLICY_CONFLICT",
+      severity: "HIGH",
+      title: "Manager approval required before customer delivery",
+      summary:
+        "The renewal draft contains commercially sensitive claims. Delivery remains blocked until an authorized operator records a decision.",
+      proposedAction:
+        "Approve the validated value-led renewal draft for SendGrid delivery, reject it for revision, or escalate the commercial exception.",
+      evidence: {
+        approval_policy: "commercial_claims_v2",
+        validated_claims: 3,
+        delivery_provider: "SendGrid",
+        contract_eligibility: "verified",
+      },
+      sourceEventIds: [keyToId.get("decision")!, keyToId.get("approval")!],
+    },
+  });
 
   const verified = {
     traces: await countRows(

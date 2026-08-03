@@ -315,6 +315,10 @@ export const events = {
     "update_required_badge_clicked",
     "migrate_evals_with_agent_clicked",
   ],
+  // Exception decisions are an adoption signal for the human-in-the-loop
+  // safety boundary. Props are static enums only; never send run ids, reasons,
+  // evidence, or customer content.
+  agent_exception: ["resolved"],
   // Filter/search-bar usage analytics (LFE-10781). METADATA ONLY — payloads
   // never carry a raw filter value, search text, or AI prompt (PII). Only
   // type/column/operator/key(field-name)/counts/lengths/booleans/enums.
