@@ -192,9 +192,70 @@ model Project {
   simulationScenarios           SimulationScenario[]
   simulationRuns                SimulationRun[]
   agentExecutionExceptions      AgentExecutionException[]
+  agentActions                  AgentAction[]
 
   @@index([orgId])
   @@map("projects")
+}
+
+enum AgentActionStatus {
+  BLOCKED
+  APPROVED
+  QUEUED
+  DISPATCHING
+  SUCCEEDED
+  FAILED
+  REQUIRES_RECONCILIATION
+  CANCELLED
+}
+
+enum AgentActionProvider {
+  GMAIL
+  SALESFORCE
+  HUBSPOT
+  PRINTAVO
+}
+
+model AgentAction {
+  id                 String              @id @default(cuid())
+  projectId          String              @map("project_id")
+  project            Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  runId              String              @map("run_id")
+  idempotencyKey     String              @map("idempotency_key")
+  provider           AgentActionProvider
+  actionType         String              @map("action_type")
+  payload            Json                @db.JsonB
+  payloadHash        String              @map("payload_hash")
+  status             AgentActionStatus   @default(BLOCKED)
+  retryCount         Int                 @default(0) @map("retry_count")
+  externalReference  String?             @map("external_reference")
+  failureCode        String?             @map("failure_code")
+  failureSummary     String?             @map("failure_summary")
+  version            Int                 @default(1)
+  approvedAt         DateTime?           @map("approved_at")
+  approvedByUserId   String?             @map("approved_by_user_id")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
+  attempts           AgentActionAttempt[]
+
+  @@unique([projectId, idempotencyKey])
+  @@index([projectId, runId, createdAt(sort: Desc), id])
+  @@index([projectId, status, createdAt(sort: Desc), id])
+  @@map("agent_actions")
+}
+
+model AgentActionAttempt {
+  id           String      @id @default(cuid())
+  actionId     String      @map("action_id")
+  action       AgentAction @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  attempt      Int
+  outcome      String
+  summary      String?
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  @@unique([actionId, attempt])
+  @@index([actionId, createdAt(sort: Desc), id])
+  @@map("agent_action_attempts")
 }
 
 model Agent {
