@@ -9,6 +9,7 @@ import {
   Workflow,
   FlaskConical,
   ShieldAlert,
+  Send,
 } from "lucide-react";
 import { StringParam, useQueryParam } from "use-query-params";
 import {
@@ -32,6 +33,7 @@ import { RunReplayProvider } from "../replay/RunReplayProvider";
 import { ReplayToolbar } from "../replay/ReplayToolbar";
 import { SimulationConsole } from "../../execution-simulation/components/SimulationConsole";
 import { ExceptionDesk } from "../../agent-exceptions/components/ExceptionDesk";
+import { ActionOutbox } from "../../agent-actions/components/ActionOutbox";
 
 type Trace = NonNullable<ComponentProps<typeof TraceDetailBody>["trace"]>;
 
@@ -70,7 +72,8 @@ function RunWorkbenchContent({
     runViewParam === "memory" ||
     runViewParam === "decisions" ||
     runViewParam === "simulation" ||
-    runViewParam === "exceptions"
+    runViewParam === "exceptions" ||
+    runViewParam === "outbox"
       ? runViewParam
       : "live";
   const isSeededDemo = projection.events.some(
@@ -120,6 +123,10 @@ function RunWorkbenchContent({
             <ShieldAlert className="size-3.5" />
             Exceptions
           </TabsBarTrigger>
+          <TabsBarTrigger value="outbox" className="gap-1.5">
+            <Send className="size-3.5" />
+            Outbox
+          </TabsBarTrigger>
           <TabsBarTrigger value="trace" className="gap-1.5">
             <Workflow className="size-3.5" />
             Raw execution
@@ -164,6 +171,12 @@ function RunWorkbenchContent({
           className="mt-0 min-h-0 flex-1 overflow-hidden"
         >
           <ExceptionDesk />
+        </TabsBarContent>
+        <TabsBarContent
+          value="outbox"
+          className="mt-0 min-h-0 flex-1 overflow-hidden"
+        >
+          <ActionOutbox />
         </TabsBarContent>
         <TabsBarContent
           value="trace"

@@ -2,6 +2,7 @@ import {
   createEventsCh,
   createObservation,
   createObservationsCh,
+  createAgentAction,
   createTrace,
   createTracesCh,
   recordAgentExecutionException,
@@ -977,6 +978,21 @@ const run = async (
         contract_eligibility: "verified",
       },
       sourceEventIds: [keyToId.get("decision")!, keyToId.get("approval")!],
+    },
+  });
+
+  await createAgentAction({
+    input: {
+      projectId: ctx.projectId,
+      runId: traceId,
+      idempotencyKey: `${traceId}:northstar-renewal-email:v1`,
+      provider: "GMAIL",
+      actionType: "SEND_CUSTOMER_RENEWAL_EMAIL",
+      payload: {
+        recipient: "operations@northstar-logistics.example",
+        subject: "Northstar Logistics renewal options",
+        policy: "commercial_claims_v2",
+      },
     },
   });
 

@@ -64,6 +64,7 @@ import { v4TransitionRouter } from "@/src/features/v4/server/v4TransitionRouter"
 import { agentExecutionsRouter } from "@/src/features/agent-executions/server/router";
 import { executionSimulationRouter } from "@/src/features/execution-simulation/server/router";
 import { agentExceptionsRouter } from "@/src/features/agent-exceptions/server/router";
+import { agentActionsRouter } from "@/src/features/agent-actions/server/router";
 
 /**
  * This is the primary router for your server.
@@ -136,6 +137,7 @@ export const appRouter = createTRPCRouter({
   agentExecutions: agentExecutionsRouter,
   executionSimulation: executionSimulationRouter,
   agentExceptions: agentExceptionsRouter,
+  agentActions: agentActionsRouter,
 });
 
 // export type definition of API

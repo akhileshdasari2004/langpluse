@@ -20,6 +20,7 @@ export type AuditableResource =
   | "trace"
   | "agent"
   | "agentExecutionException"
+  | "agentAction"
   | "simulationScenario"
   | "simulationRun"
   | "project"
