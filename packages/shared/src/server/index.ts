@@ -115,6 +115,7 @@ export * from "./redis/notificationQueue";
 export * from "./redis/executionSimulationQueue";
 export * from "./agent-executions/exceptionsRepository";
 export * from "./agent-executions/actionsRepository";
+export * from "./agent-executions/connectors";
 export * from "./webhooks/validation";
 export * from "./webhooks/ipBlocking";
 export * from "./redis/experimentCreateQueue";
